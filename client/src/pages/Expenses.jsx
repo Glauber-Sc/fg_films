@@ -506,6 +506,8 @@ import ExpenseForm from "../components/ExpenseForm";
 import PageHeader from "../components/PageHeader";
 import { formatCurrency } from "../utils/format";
 
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+
 // Util: simple badge like the screenshot
 const StatusBadge = ({ status }) => {
   if (!status) return <span className="text-gray-400">—</span>;
@@ -551,7 +553,7 @@ const Expenses = () => {
   const [loading, setLoading] = useState(true);
 
   // UI state for the screenshot-like layout
-  const [activeTab, setActiveTab] = useState("todas"); // todas | aprovadas | pendentes
+  const [activeTab, setActiveTab] = useState("todas"); // todas | pagas | pendentes
   const [query, setQuery] = useState("");
   const [dateRange, setDateRange] = useState("30"); // days: 7 | 30 | 365
 
@@ -642,7 +644,7 @@ const Expenses = () => {
         return hay.includes(query.toLowerCase());
       })
       .filter((e) => {
-        if (activeTab === "aprovadas") return (e.status ?? "").toLowerCase() === "approved" || (e.status ?? "").toLowerCase() === "aprovada";
+        if (activeTab === "pagas") return (e.status ?? "").toLowerCase() === "approved" || (e.status ?? "").toLowerCase() === "aprovada";
         if (activeTab === "pendentes") return (e.status ?? "").toLowerCase() === "pending" || (e.status ?? "").toLowerCase() === "pendente";
         return true; // todas
       });
@@ -671,7 +673,7 @@ const Expenses = () => {
         <nav className="-mb-px flex space-x-6">
           {[
             { key: "todas", label: "Todas as Despesas" },
-            { key: "aprovadas", label: "Aprovadas" },
+            { key: "pagas", label: "Pagas" },
             { key: "pendentes", label: "Pendentes" },
           ].map((tab) => (
             <button
@@ -804,13 +806,13 @@ const Expenses = () => {
                           onClick={() => handleEdit(expense)}
                           className="text-blue-600 hover:text-blue-900"
                         >
-                          Editar
+                        <PencilIcon className="h-5 w-5" />
                         </button>
                         <button
                           onClick={() => handleDeleteExpense(expense.id)}
                           className="text-red-600 hover:text-red-900"
                         >
-                          Excluir
+                         <TrashIcon className="h-5 w-5" />
                         </button>
                       </div>
                     </td>
