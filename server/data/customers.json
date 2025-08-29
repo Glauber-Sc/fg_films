@@ -1,0 +1,35 @@
+[
+  {
+    "id": "1",
+    "name": "João Silva",
+    "phone": "(11) 99999-1111",
+    "document": "123.456.789-00",
+    "address": "Rua das Flores, 123, Centro, São Paulo",
+    "notes": "Cliente preferencial",
+    "createdAt": "2023-05-01T10:00:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Maria Santos",
+    "phone": "(11) 88888-2222",
+    "document": "987.654.321-00",
+    "address": "Av. Paulista, 456, Bela Vista, São Paulo",
+    "notes": "",
+    "createdAt": "2023-05-02T14:30:00Z"
+  },
+  {
+    "id": "ozf7wgr96",
+    "name": "Glauber Santiago",
+    "createdAt": "2025-08-13T00:09:40.276Z",
+    "phone": "91999999999",
+    "document": "100.879.190-36",
+    "address": "Av. Paulista, 456, Bela Vista, São Paulo",
+    "notes": "",
+    "updatedAt": "2025-08-13T16:29:48.559Z"
+  },
+  {
+    "id": "n1vrfl7cy",
+    "name": "Daniel",
+    "createdAt": "2025-08-28T19:11:25.451Z"
+  }
+]

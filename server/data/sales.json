@@ -1,0 +1,48 @@
+[
+  {
+    "id": "dxf02e9mb",
+    "productId": "3",
+    "productName": "Kit Trava Elétrica 4 Portas",
+    "quantity": 1,
+    "unitPrice": 299.9,
+    "total": 299.9,
+    "customerId": null,
+    "customerName": "Glauber",
+    "paymentMethods": [
+      {
+        "method": "Cartão de Crédito",
+        "amount": 150,
+        "machine": "Máquina A",
+        "id": 1756471816086
+      },
+      {
+        "method": "Cartão de Crédito",
+        "amount": 149.9,
+        "machine": "Máquina B",
+        "id": 1756471837179
+      }
+    ],
+    "date": "2025-08-29T12:50:45.961Z",
+    "quoteId": null
+  },
+  {
+    "id": "wftr2rz0a",
+    "productId": "1",
+    "productName": "Central Multimídia Android 10\"",
+    "quantity": 1,
+    "unitPrice": 1999.9,
+    "total": 1999.9,
+    "customerId": null,
+    "customerName": "Cliente não identificado",
+    "paymentMethods": [
+      {
+        "method": "PIX",
+        "amount": 1999.9,
+        "machine": null,
+        "id": 1756487288048
+      }
+    ],
+    "date": "2025-08-28T17:08:12.095Z",
+    "quoteId": null
+  }
+]

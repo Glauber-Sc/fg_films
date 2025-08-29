@@ -1,0 +1,24 @@
+[
+  {
+    "id": "7la4zdu1k",
+    "quoteNumber": 4,
+    "customerId": null,
+    "customerName": "Cliente não informado",
+    "items": [
+      {
+        "id": "1",
+        "name": "Central Multimídia Android 10\"",
+        "brand": "SoundTech",
+        "price": 1999.9,
+        "quantity": 1,
+        "stock": 7,
+        "total": 1999.9
+      }
+    ],
+    "total": 1999.9,
+    "notes": "",
+    "date": "2025-08-28T14:22:13.891Z",
+    "status": "pending",
+    "createdAt": "2025-08-28T14:22:13.939Z"
+  }
+]

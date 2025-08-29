@@ -1,0 +1,613 @@
+// // "use client"
+
+// // import { useState, useEffect } from "react"
+// // import { Link } from "react-router-dom"
+// // import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline"
+// // import { toast } from "react-toastify"
+// // import PageHeader from "../components/PageHeader"
+// // import Card from "../components/Card"
+// // import { fetchSuppliers, deleteSupplier } from "../services/api"
+
+// // const Suppliers = () => {
+// //   const [suppliers, setSuppliers] = useState([])
+// //   const [isLoading, setIsLoading] = useState(true)
+// //   const [searchTerm, setSearchTerm] = useState("")
+
+// //   useEffect(() => {
+// //     loadSuppliers()
+// //   }, [])
+
+// //   const loadSuppliers = async () => {
+// //     try {
+// //       setIsLoading(true)
+// //       const data = await fetchSuppliers()
+// //       setSuppliers(data)
+// //     } catch (error) {
+// //       console.error("Error loading suppliers:", error)
+// //       toast.error("Erro ao carregar fornecedores")
+// //     } finally {
+// //       setIsLoading(false)
+// //     }
+// //   }
+
+// //   const handleDelete = async (id) => {
+// //     if (window.confirm("Tem certeza que deseja excluir este fornecedor?")) {
+// //       try {
+// //         await deleteSupplier(id)
+// //         setSuppliers(suppliers.filter((supplier) => supplier.id !== id))
+// //         toast.success("Fornecedor excluído com sucesso")
+// //       } catch (error) {
+// //         console.error("Error deleting supplier:", error)
+// //         toast.error("Erro ao excluir fornecedor")
+// //       }
+// //     }
+// //   }
+
+// //   const filteredSuppliers = suppliers.filter(
+// //     (supplier) =>
+// //       supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+// //       (supplier.cnpj && supplier.cnpj.includes(searchTerm)) ||
+// //       (supplier.email && supplier.email.toLowerCase().includes(searchTerm.toLowerCase())),
+// //   )
+
+// //   const ActionButton = () => (
+// //     <Link to="/suppliers/add" className="btn-primary flex items-center">
+// //       <PlusIcon className="w-5 h-5 mr-1" />
+// //       Novo Fornecedor
+// //     </Link>
+// //   )
+
+// //   return (
+// //     <div>
+// //       <PageHeader title="Fornecedores" actionButton={<ActionButton />} />
+
+// //       <>
+// //         <div className="mb-6">
+// //           <input
+// //             type="text"
+// //             placeholder="Buscar fornecedores por nome, CNPJ ou email..."
+// //             className="input-field"
+// //             value={searchTerm}
+// //             onChange={(e) => setSearchTerm(e.target.value)}
+// //           />
+// //         </div>
+
+// //         {isLoading ? (
+// //           <div className="text-center py-4">Carregando...</div>
+// //         ) : (
+// //           <div className="table-container">
+// //             <table className="table">
+// //               <thead>
+// //                 <tr>
+// //                   <th className="table-header">Nome</th>
+// //                   <th className="table-header">CNPJ</th>
+// //                   <th className="table-header">Telefone</th>
+// //                   <th className="table-header">Email</th>
+// //                   <th className="table-header">Ações</th>
+// //                 </tr>
+// //               </thead>
+// //               <tbody>
+// //                 {filteredSuppliers.length > 0 ? (
+// //                   filteredSuppliers.map((supplier) => (
+// //                     <tr key={supplier.id}>
+// //                       <td className="table-cell font-medium">{supplier.name}</td>
+// //                       <td className="table-cell">{supplier.cnpj || "-"}</td>
+// //                       <td className="table-cell">{supplier.phone || "-"}</td>
+// //                       <td className="table-cell">{supplier.email || "-"}</td>
+// //                       <td className="table-cell">
+// //                         <div className="flex space-x-2">
+// //                           <Link
+// //                             to={`/suppliers/edit/${supplier.id}`}
+// //                             className="p-1 text-blue-600 hover:text-blue-800"
+// //                             title="Editar"
+// //                           >
+// //                             <PencilIcon className="w-5 h-5" />
+// //                           </Link>
+// //                           <button
+// //                             onClick={() => handleDelete(supplier.id)}
+// //                             className="p-1 text-red-600 hover:text-red-800"
+// //                             title="Excluir"
+// //                           >
+// //                             <TrashIcon className="w-5 h-5" />
+// //                           </button>
+// //                         </div>
+// //                       </td>
+// //                     </tr>
+// //                   ))
+// //                 ) : (
+// //                   <tr>
+// //                     <td colSpan="5" className="table-cell text-center">
+// //                       Nenhum fornecedor encontrado
+// //                     </td>
+// //                   </tr>
+// //                 )}
+// //               </tbody>
+// //             </table>
+// //           </div>
+// //         )}
+// //       </>
+// //     </div>
+// //   )
+// // }
+
+// // export default Suppliers
+
+
+
+
+
+
+// import { useState, useEffect, useMemo } from "react"
+// import { Link, useSearchParams } from "react-router-dom"
+// import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline"
+// import { toast } from "react-toastify"
+// import PageHeader from "../components/PageHeader"
+// import Card from "../components/Card"
+// import { fetchSuppliers, deleteSupplier } from "../services/api"
+
+// // Componente de paginação com reticências
+// function Pagination({ currentPage, totalPages, onChange, className = "", windowSize = 1 }) {
+//   const pages = useMemo(() => {
+//     if (totalPages <= 1) return [1]
+//     const out = []
+//     const add = (p) => out.push(p)
+//     const start = Math.max(2, currentPage - windowSize)
+//     const end = Math.min(totalPages - 1, currentPage + windowSize)
+//     add(1)
+//     if (start > 2) add("…")
+//     for (let p = start; p <= end; p++) add(p)
+//     if (end < totalPages - 1) add("…")
+//     if (totalPages > 1) add(totalPages)
+//     return out
+//   }, [currentPage, totalPages, windowSize])
+
+//   return (
+//     <nav className={`inline-flex items-center gap-1 select-none ${className}`} role="navigation" aria-label="Paginação">
+//       <button type="button" onClick={() => onChange(1)} disabled={currentPage === 1} className="px-3 py-1 rounded border text-sm disabled:opacity-50" aria-label="Primeira página">«</button>
+//       <button type="button" onClick={() => onChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1} className="px-3 py-1 rounded border text-sm disabled:opacity-50" aria-label="Página anterior">Anterior</button>
+//       {pages.map((p, i) => (
+//         <button key={`${p}-${i}`} type="button" onClick={() => (p !== "…" ? onChange(p) : null)} disabled={p === "…"} aria-current={p === currentPage ? "page" : undefined} className={`px-3 py-1 rounded border text-sm min-w-[40px] ${p === currentPage ? "bg-black text-white border-black" : "hover:bg-gray-100"} ${p === "…" ? "cursor-default" : ""}`}>{p}</button>
+//       ))}
+//       <button type="button" onClick={() => onChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} className="px-3 py-1 rounded border text-sm disabled:opacity-50" aria-label="Próxima página">Próxima</button>
+//       <button type="button" onClick={() => onChange(totalPages)} disabled={currentPage === totalPages} className="px-3 py-1 rounded border text-sm disabled:opacity-50" aria-label="Última página">»</button>
+//     </nav>
+//   )
+// }
+
+// const Suppliers = () => {
+//   const [suppliers, setSuppliers] = useState([])
+//   const [isLoading, setIsLoading] = useState(true)
+//   const [searchTerm, setSearchTerm] = useState("")
+
+//   // Estado de paginação + sincronização de URL
+//   const [searchParams, setSearchParams] = useSearchParams()
+//   const initialPage = Number(searchParams.get("page")) || 1
+//   const initialPageSize = Number(searchParams.get("pageSize")) || 10
+//   const [currentPage, setCurrentPage] = useState(initialPage)
+//   const [pageSize, setPageSize] = useState(initialPageSize)
+
+//   useEffect(() => {
+//     loadSuppliers()
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [])
+
+//   const loadSuppliers = async () => {
+//     try {
+//       setIsLoading(true)
+//       const data = await fetchSuppliers()
+//       setSuppliers(data)
+//     } catch (error) {
+//       console.error("Error loading suppliers:", error)
+//       toast.error("Erro ao carregar fornecedores")
+//     } finally {
+//       setIsLoading(false)
+//     }
+//   }
+
+//   const handleDelete = async (id) => {
+//     if (window.confirm("Tem certeza que deseja excluir este fornecedor?")) {
+//       try {
+//         await deleteSupplier(id)
+//         setSuppliers((prev) => prev.filter((supplier) => supplier.id !== id))
+//         toast.success("Fornecedor excluído com sucesso")
+//       } catch (error) {
+//         console.error("Error deleting supplier:", error)
+//         toast.error("Erro ao excluir fornecedor")
+//       }
+//     }
+//   }
+
+//   const filteredSuppliers = useMemo(() => {
+//     const term = searchTerm.toLowerCase()
+//     if (!term) return suppliers
+//     return suppliers.filter((supplier) =>
+//       (supplier.name || "").toLowerCase().includes(term) ||
+//       (supplier.cnpj || "").includes(searchTerm) ||
+//       (supplier.email || "").toLowerCase().includes(term)
+//     )
+//   }, [suppliers, searchTerm])
+
+//   // Reset página ao mudar busca ou pageSize
+//   useEffect(() => {
+//     setCurrentPage(1)
+//   }, [searchTerm, pageSize])
+
+//   // Cálculo de paginação
+//   const totalItems = filteredSuppliers.length
+//   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+//   const safePage = Math.min(Math.max(1, currentPage), totalPages)
+//   const startIdx = (safePage - 1) * pageSize
+//   const endIdx = Math.min(startIdx + pageSize, totalItems)
+//   const currentItems = filteredSuppliers.slice(startIdx, endIdx)
+
+//   // Sincroniza na URL (?page, pageSize, q)
+//   useEffect(() => {
+//     const params = new URLSearchParams(searchParams)
+//     params.set("page", String(safePage))
+//     params.set("pageSize", String(pageSize))
+//     if (searchTerm) params.set("q", searchTerm)
+//     else params.delete("q")
+//     setSearchParams(params, { replace: true })
+//   }, [safePage, pageSize, searchTerm, searchParams, setSearchParams])
+
+//   const ActionButton = () => (
+//     <Link to="/suppliers/add" className="btn-primary flex items-center">
+//       <PlusIcon className="w-5 h-5 mr-1" />
+//       Novo Fornecedor
+//     </Link>
+//   )
+
+//   return (
+//     <div>
+//       <PageHeader title="Fornecedores" actionButton={<ActionButton />} />
+
+//       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+//         <input
+//           type="text"
+//           placeholder="Buscar fornecedores por nome, CNPJ ou email..."
+//           className="input-field w-full md:max-w-md"
+//           value={searchTerm}
+//           onChange={(e) => setSearchTerm(e.target.value)}
+//           aria-label="Campo de busca de fornecedores"
+//         />
+//         <div className="flex items-center gap-2">
+//           <label htmlFor="pageSize" className="text-sm text-gray-600">Itens por página</label>
+//           <select id="pageSize" className="border rounded px-2 py-1" value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
+//             {[10, 20, 50, 100].map((n) => (
+//               <option key={n} value={n}>{n}</option>
+//             ))}
+//           </select>
+//         </div>
+//       </div>
+
+//       {isLoading ? (
+//         <div className="text-center py-4">Carregando...</div>
+//       ) : (
+//         <>
+//           <div className="table-container">
+//             <table className="table">
+//               <thead>
+//                 <tr>
+//                   <th className="table-header">Nome</th>
+//                   <th className="table-header">CNPJ</th>
+//                   <th className="table-header">Telefone</th>
+//                   <th className="table-header">Email</th>
+//                   <th className="table-header">Ações</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {currentItems.length > 0 ? (
+//                   currentItems.map((supplier) => (
+//                     <tr key={supplier.id}>
+//                       <td className="table-cell text-black-600 hover:text-black-800 text-sm font-medium">{supplier.name}</td>
+//                       <td className="table-cell text-black-600 hover:text-black-800 text-sm font-medium">{supplier.cnpj || "-"}</td>
+//                       <td className="table-cell text-black-600 hover:text-black-800 text-sm font-medium">{supplier.phone || "-"}</td>
+//                       <td className="table-cell text-black-600 hover:text-black-800 text-sm font-medium">{supplier.email || "-"}</td>
+//                       <td className="table-cell text-black-600 hover:text-black-800 text-sm font-medium">
+//                         <div className="flex space-x-2">
+//                           <Link to={`/suppliers/edit/${supplier.id}`} className="p-1 text-blue-600 hover:text-blue-800" title="Editar">
+//                             <PencilIcon className="w-5 h-5" />
+//                           </Link>
+//                           <button onClick={() => handleDelete(supplier.id)} className="p-1 text-red-600 hover:text-red-800" title="Excluir">
+//                             <TrashIcon className="w-5 h-5" />
+//                           </button>
+//                         </div>
+//                       </td>
+//                     </tr>
+//                   ))
+//                 ) : (
+//                   <tr>
+//                     <td colSpan="5" className="table-cell text-center">Nenhum fornecedor encontrado</td>
+//                   </tr>
+//                 )}
+//               </tbody>
+//             </table>
+//           </div>
+
+//           {/* Footer de paginação */}
+//           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mt-6">
+//             <div className="text-sm text-gray-700">
+//               {totalItems > 0 ? (
+//                 <span>
+//                   Exibindo <strong>{startIdx + 1}</strong>–<strong>{endIdx}</strong> de <strong>{totalItems}</strong> fornecedores
+//                 </span>
+//               ) : (
+//                 <span>Nenhum registro</span>
+//               )}
+//             </div>
+//             {totalPages > 1 && (
+//               <Pagination currentPage={safePage} totalPages={totalPages} onChange={(p) => setCurrentPage(p)} className="justify-center" windowSize={1} />
+//             )}
+//           </div>
+//         </>
+//       )}
+//     </div>
+//   )
+// }
+
+// export default Suppliers
+
+
+
+
+import { useState, useEffect, useMemo } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { toast } from "react-toastify";
+import { fetchSuppliers, deleteSupplier } from "../services/api";
+
+// Debounce simples
+function useDebounce(value, delay = 350) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(id);
+  }, [value, delay]);
+  return debounced;
+}
+
+// Ícone de busca inline
+const SearchIcon = (props) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={props.className}>
+    <circle cx="11" cy="11" r="7"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+);
+
+// Paginação padronizada
+function Pagination({ currentPage, totalPages, onChange, className = "", windowSize = 1 }) {
+  const pages = useMemo(() => {
+    if (totalPages <= 1) return [1];
+    const out = [];
+    const add = (p) => out.push(p);
+    const start = Math.max(2, currentPage - windowSize);
+    const end = Math.min(totalPages - 1, currentPage + windowSize);
+    add(1);
+    if (start > 2) add("…");
+    for (let p = start; p <= end; p++) add(p);
+    if (end < totalPages - 1) add("…");
+    if (totalPages > 1) add(totalPages);
+    return out;
+  }, [currentPage, totalPages, windowSize]);
+
+  return (
+    <nav className={`inline-flex items-center gap-1 select-none ${className}`} role="navigation" aria-label="Paginação">
+      <button type="button" onClick={() => onChange(1)} disabled={currentPage === 1} className="px-3 py-1 rounded border text-sm disabled:opacity-50" aria-label="Primeira página">«</button>
+      <button type="button" onClick={() => onChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1} className="px-3 py-1 rounded border text-sm disabled:opacity-50" aria-label="Página anterior">Anterior</button>
+      {pages.map((p, i) => (
+        <button key={`${p}-${i}`} type="button" onClick={() => (p !== "…" ? onChange(p) : null)} disabled={p === "…"} aria-current={p === currentPage ? "page" : undefined} className={`px-3 py-1 rounded border text-sm min-w-[40px] ${p === currentPage ? "bg-black text-white border-black" : "hover:bg-gray-100"} ${p === "…" ? "cursor-default" : ""}`}>{p}</button>
+      ))}
+      <button type="button" onClick={() => onChange(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} className="px-3 py-1 rounded border text-sm disabled:opacity-50" aria-label="Próxima página">Próxima</button>
+      <button type="button" onClick={() => onChange(totalPages)} disabled={currentPage === totalPages} className="px-3 py-1 rounded border text-sm disabled:opacity-50" aria-label="Última página">»</button>
+    </nav>
+  );
+}
+
+const onlyDigits = (s = "") => String(s).replace(/\D+/g, "");
+
+const Suppliers = () => {
+  const [suppliers, setSuppliers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 300);
+
+  // Estado de paginação + sincronização de URL
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialPage = Number(searchParams.get("page")) || 1;
+  const initialPageSize = Number(searchParams.get("pageSize")) || 10;
+  const initialQ = searchParams.get("q") || "";
+
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [pageSize, setPageSize] = useState(initialPageSize);
+
+  useEffect(() => {
+    if (initialQ) setSearchTerm(initialQ);
+    loadSuppliers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loadSuppliers = async () => {
+    try {
+      setIsLoading(true);
+      const data = await fetchSuppliers();
+      setSuppliers(data || []);
+    } catch (error) {
+      console.error("Error loading suppliers:", error);
+      toast.error("Erro ao carregar fornecedores");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Tem certeza que deseja excluir este fornecedor?")) {
+      try {
+        await deleteSupplier(id);
+        setSuppliers((prev) => prev.filter((s) => s.id !== id));
+        toast.success("Fornecedor excluído com sucesso");
+      } catch (error) {
+        console.error("Error deleting supplier:", error);
+        toast.error("Erro ao excluir fornecedor");
+      }
+    }
+  };
+
+  const filteredSuppliers = useMemo(() => {
+    const term = debouncedSearch.trim().toLowerCase();
+    const digits = onlyDigits(debouncedSearch);
+    if (!term) return suppliers;
+    return suppliers.filter((s) => {
+      const nameMatch = String(s.name || "").toLowerCase().includes(term);
+      const emailMatch = String(s.email || "").toLowerCase().includes(term);
+      const cnpjMatch = digits ? onlyDigits(s.cnpj).includes(digits) : false;
+      const phoneMatch = digits ? onlyDigits(s.phone).includes(digits) : false;
+      return nameMatch || emailMatch || cnpjMatch || phoneMatch;
+    });
+  }, [suppliers, debouncedSearch]);
+
+  // Reset página ao mudar busca/pageSize
+  useEffect(() => { setCurrentPage(1); }, [debouncedSearch, pageSize]);
+
+  // Paginação
+  const totalItems = filteredSuppliers.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const safePage = Math.min(Math.max(1, currentPage), totalPages);
+  const startIdx = (safePage - 1) * pageSize;
+  const endIdx = Math.min(startIdx + pageSize, totalItems);
+  const currentItems = filteredSuppliers.slice(startIdx, endIdx);
+
+  // Sincroniza na URL (?page, pageSize, q)
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", String(safePage));
+    params.set("pageSize", String(pageSize));
+    if (searchTerm) params.set("q", searchTerm); else params.delete("q");
+    setSearchParams(params, { replace: true });
+  }, [safePage, pageSize, searchTerm, searchParams, setSearchParams]);
+
+  return (
+    <div className="p-6">
+      {/* Header padronizado */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-gray-900">Fornecedores</h1>
+        <p className="text-sm text-gray-500">Gerencie seus fornecedores e dados de contato</p>
+      </div>
+
+      {/* Toolbar */}
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:w-96">
+          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Buscar por nome, CNPJ, email ou telefone"
+            className="w-full rounded-md border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm text-gray-700 shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/5"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label="Campo de busca de fornecedores"
+          />
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <label htmlFor="pageSize" className="text-sm text-gray-600">Itens por página</label>
+            <div className="relative">
+              <select
+                id="pageSize"
+                className="appearance-none rounded-md border border-gray-200 bg-white px-3 py-2 pr-8 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900/5"
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+              >
+                {[10, 20, 50, 100].map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+              <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-400">▾</span>
+            </div>
+          </div>
+
+          <Link
+            to="/suppliers/add"
+            className="inline-flex items-center gap-2 rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-black/30"
+          >
+            <PlusIcon className="h-5 w-5" /> Novo Fornecedor
+          </Link>
+        </div>
+      </div>
+
+      {/* Card + tabela */}
+      <div className="overflow-hidden rounded-lg bg-white shadow">
+        <div className="flex items-start justify-between border-b bg-gray-50 px-6 py-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">Lista de Fornecedores</h3>
+            <p className="text-sm text-gray-500">Resultados da busca e paginação</p>
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-gray-600">Total</p>
+            <p className="text-2xl font-bold text-gray-900">{totalItems}</p>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="py-10 text-center text-gray-600">Carregando...</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Nome</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">CNPJ</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Telefone</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Email</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Ações</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {currentItems.length > 0 ? (
+                  currentItems.map((s) => (
+                    <tr key={s.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{s.name}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{s.cnpj || "-"}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{s.phone || "-"}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{s.email || "-"}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Link to={`/suppliers/edit/${s.id}`} className="p-1 text-blue-600 hover:text-blue-800" title="Editar">
+                            <PencilIcon className="h-5 w-5" />
+                          </Link>
+                          <button onClick={() => handleDelete(s.id)} className="p-1 text-red-600 hover:text-red-800" title="Excluir">
+                            <TrashIcon className="h-5 w-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-10 text-center text-gray-500">Nenhum fornecedor encontrado</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Footer de paginação */}
+      <div className="mt-6 flex flex-col items-center justify-between gap-3 sm:flex-row">
+        <div className="text-sm text-gray-700">
+          {totalItems > 0 ? (
+            <span>
+              Exibindo <strong>{startIdx + 1}</strong>–<strong>{endIdx}</strong> de <strong>{totalItems}</strong> fornecedores
+            </span>
+          ) : (
+            <span>Nenhum registro</span>
+          )}
+        </div>
+        {totalPages > 1 && (
+          <Pagination currentPage={safePage} totalPages={totalPages} onChange={(p) => setCurrentPage(p)} className="justify-center" windowSize={1} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Suppliers;
