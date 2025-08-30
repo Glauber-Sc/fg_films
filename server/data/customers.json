@@ -30,6 +30,11 @@
   {
     "id": "n1vrfl7cy",
     "name": "Daniel",
-    "createdAt": "2025-08-28T19:11:25.451Z"
+    "createdAt": "2025-08-28T19:11:25.451Z",
+    "phone": "",
+    "document": "",
+    "address": "",
+    "notes": "",
+    "updatedAt": "2025-08-30T18:53:35.041Z"
   }
 ]
