@@ -658,7 +658,7 @@ const SearchIcon = (props) => (
 const StockBadge = ({ kind, threshold }) => {
   const map = {
     out: { label: "Esgotado", cls: "bg-red-100 text-red-700 border-red-200" },
-    low: { label: `Estoque Baixo${threshold ? ` (≤${threshold})` : ""}`, cls: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+    low: { label: `Estoque Baixo`, cls: "bg-yellow-100 text-yellow-700 border-yellow-200" },
     in: { label: "Em Estoque", cls: "bg-green-100 text-green-700 border-green-200" },
   };
   const v = map[kind] || map.in;

@@ -504,7 +504,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import ExpenseForm from "../components/ExpenseForm";
 import PageHeader from "../components/PageHeader";
-import { formatCurrency } from "../utils/format";
+import { formatCurrency, formatDate, parseLocalDate } from "../utils/format";
+
 
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
@@ -634,7 +635,7 @@ const Expenses = () => {
 
     return expenses
       .filter((e) => {
-        const d = e.date ? new Date(e.date) : null;
+        const d = parseLocalDate(e.date);
         if (d && d < limit) return false;
         return true;
       })
@@ -792,7 +793,7 @@ const Expenses = () => {
                     <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{expense.id ?? "—"}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{expense.description}</td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                      {expense.date ? new Date(expense.date).toLocaleDateString("pt-BR") : "—"}
+                      {formatDate(expense.date)}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-red-600">
                       {formatCurrency(Number(expense.value) || 0)}

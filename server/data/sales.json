@@ -124,5 +124,57 @@
     ],
     "date": "2025-09-01T01:30:07.369Z",
     "quoteId": null
+  },
+  {
+    "id": "gzltivlgm",
+    "productId": "4",
+    "productName": "Módulo de Subida de Vidro Elétrico",
+    "quantity": 1,
+    "unitPrice": 199.9,
+    "total": 199.9,
+    "customerId": null,
+    "customerName": "Cliente não identificado",
+    "paymentMethods": [
+      {
+        "method": "Dinheiro",
+        "amount": 199.9,
+        "machine": null,
+        "id": 1756741847269
+      }
+    ],
+    "date": "2025-09-01T15:50:49.116Z",
+    "quoteId": null
+  },
+  {
+    "id": "c3klp1iih",
+    "productId": "1",
+    "productName": "Central Multimídia Android 10\"",
+    "quantity": 1,
+    "unitPrice": 1999.9,
+    "total": 1999.9,
+    "customerId": "n1vrfl7cy",
+    "customerName": "Daniel",
+    "paymentMethods": [
+      {
+        "method": "Cartão de Crédito",
+        "amount": 1,
+        "machine": "Máquina B",
+        "id": 1756744109992
+      },
+      {
+        "method": "Cartão de Crédito",
+        "amount": 1,
+        "machine": "Máquina A",
+        "id": 1756744114201
+      },
+      {
+        "method": "PIX",
+        "amount": 1997.9,
+        "machine": null,
+        "id": 1756744593394
+      }
+    ],
+    "date": "2025-09-01T16:37:39.486Z",
+    "quoteId": null
   }
 ]
