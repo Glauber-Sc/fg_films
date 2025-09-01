@@ -2990,12 +2990,12 @@ function reducer(state, action) {
       const payments = state.payments.map((pm) =>
         pm.id === id
           ? {
-              ...pm,
-              [field]: field === "amount" || field === "installments" ? Number(value) || 0 : value,
-              ...(field === "method" && value !== "Cartão de Crédito" && value !== "Cartão de Débito"
-                ? { machine: "", installments: 1 }
-                : {}),
-            }
+            ...pm,
+            [field]: field === "amount" || field === "installments" ? Number(value) || 0 : value,
+            ...(field === "method" && value !== "Cartão de Crédito" && value !== "Cartão de Débito"
+              ? { machine: "", installments: 1 }
+              : {}),
+          }
           : pm
       );
       return { ...state, payments };
@@ -3279,7 +3279,7 @@ export default function PDVPro() {
       const w = window.open("", "_blank");
       w.document.write(html);
       w.document.close();
-    } catch {}
+    } catch { }
   };
 
   const handleFinalize = async () => {
@@ -3366,7 +3366,7 @@ export default function PDVPro() {
         style={{
           border: `1px solid ${C.border}`,
           borderRadius: 8,
-          height: 350,
+          height: 390,
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
@@ -3552,14 +3552,6 @@ export default function PDVPro() {
           }}
           style={{ flex: 1, minWidth: 180, maxWidth: 240, background: "#fff", borderColor: C.red, color: C.red }}
         />
-
-        <Button
-          label="Ative o Pix com a Bling Conta"
-          onClick={() => toast.info("Ação de ativação do PIX é externa (Bling Conta)")}
-          style={{ backgroundColor: C.red, color: "white", flex: 1, minWidth: 220 }}
-        />
-
-        <Button outlined label="Gerar Carnê" onClick={() => setOpenCarnet(true)} />
       </div>
 
       {/* Lista de pagamentos */}
@@ -3578,7 +3570,6 @@ export default function PDVPro() {
               <div>
                 <label style={{ display: "block", marginBottom: 6, fontSize: 13, color: "#555" }}>Valor</label>
                 <Input
-                  type="number"
                   step="0.01"
                   min="0"
                   value={p.amount}
@@ -3764,9 +3755,9 @@ export default function PDVPro() {
             overflow: "hidden",
           }}
         >
-          <div style={{ padding: 12, borderBottom: `1px solid ${C.border}`, fontWeight: 800 }}>Checkout</div>
+          <div style={{ padding: 12, borderBottom: `1px solid ${C.border}`, fontWeight: 800 }}>CAIXA</div>
 
-          <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: 10, paddingBottom: FOOTER_H }}>
+          <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: 7, paddingBottom: FOOTER_H }}>
             {state.cart.length === 0 ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", color: "#888" }}>
                 <div style={{ color: C.red, fontWeight: 800, marginBottom: 8 }}>Nenhum produto no carrinho</div>
@@ -3774,148 +3765,173 @@ export default function PDVPro() {
               </div>
             ) : (
               <div style={{ display: "grid", gap: 10 }}>
-               {state.cart.map((it) => (
-  <div
-    key={it.id}
-    style={{
-      border: `1px solid ${C.border}`,
-      borderRadius: 10,
-      padding: "8px 10px",
-      background: "#fff",
-    }}
-  >
-    {/* Linha 1: Nome (esq)  •  Stepper (dir) */}
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 8,
-      }}
-    >
-      <div
-        style={{
-          flex: 1,
-          minWidth: 0,
-          fontWeight: 800,
-          fontSize: 15,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-        title={it.name}
-      >
-        {it.name}
-      </div>
+                {state.cart.map((it) => (
+                  <div
+                    key={it.id}
+                    style={{
+                      border: `1px solid ${C.border}`,
+                      borderRadius: 10,
+                      padding: "8px 10px",
+                      background: "#fff",
+                    }}
+                  >
+                    {/* Linha 1: Nome (esq)  •  Stepper (dir) */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: 8,
+                      }}
+                    >
+                      <div
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          fontWeight: 800,
+                          fontSize: 15,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                        title={it.name}
+                      >
+                        {it.name}
+                      </div>
 
-      {/* Stepper em cápsula, fininho */}
-      <div
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          height: 28,
-          border: `1px solid ${C.border}`,
-          borderRadius: 9999,
-          overflow: "hidden",
-          background: "#fafafa",
-        }}
-      >
-        <button
-          onClick={() =>
-            dispatch({ type: "UPDATE_QTY", payload: { id: it.id, qty: it.quantity - 1 } })
-          }
-          style={{
-            padding: "0 10px",
-            borderRight: `1px solid ${C.border}`,
-            background: "transparent",
-            fontWeight: 700,
-          }}
-          aria-label="Diminuir"
-        >
-          –
-        </button>
-        <Input
-          type="number"
-          min="1"
-          value={it.quantity}
-          onChange={(e) =>
-            dispatch({
-              type: "UPDATE_QTY",
-              payload: { id: it.id, qty: Number(e.target.value) || 1 },
-            })
-          }
-          style={{
-            width: 36,
-            height: 28,
-            textAlign: "center",
-            border: "none",
-            background: "transparent",
-            padding: 0,
-            fontWeight: 700,
-          }}
-        />
-        <button
-          onClick={() =>
-            dispatch({ type: "UPDATE_QTY", payload: { id: it.id, qty: it.quantity + 1 } })
-          }
-          style={{
-            padding: "0 10px",
-            borderLeft: `1px solid ${C.border}`,
-            background: "transparent",
-            fontWeight: 700,
-          }}
-          aria-label="Aumentar"
-        >
-          +
-        </button>
-      </div>
-    </div>
+                      {/* Stepper em cápsula, fininho */}
+                      {/* Stepper quadrado, com leve boleamento */}
+                      <div
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "stretch",
+                          height: 30,
+                          border: `1px solid ${C.border}`,
+                          borderRadius: 8,            // <- leve boleamento (não redondo)
+                          overflow: "hidden",
+                          background: "#fff",
+                        }}
+                      >
+                        <button
+                          onClick={() =>
+                            dispatch({ type: "UPDATE_QTY", payload: { id: it.id, qty: it.quantity - 1 } })
+                          }
+                          style={{
+                            width: 34,
+                            height: 30,
+                            display: "grid",
+                            placeItems: "center",
+                            background: "#fafafa",
+                            borderRight: `1px solid ${C.border}`,
+                            lineHeight: 1,
+                            fontSize: 18,
+                            fontWeight: 700,
+                            cursor: "pointer",
+                          }}
+                          aria-label="Diminuir"
+                          onMouseDown={(e) => (e.currentTarget.style.filter = "brightness(.95)")}
+                          onMouseUp={(e) => (e.currentTarget.style.filter = "none")}
+                          onMouseLeave={(e) => (e.currentTarget.style.filter = "none")}
+                        >
+                          –
+                        </button>
 
-    {/* Linha 2: meta (esq)  •  total + lixeira (dir) */}
-    <div
-      style={{
-        marginTop: 6,
-        display: "flex",
-        alignItems: "baseline",
-        justifyContent: "space-between",
-        gap: 8,
-      }}
-    >
-      <div style={{ flex: 1, minWidth: 0, fontSize: 12, color: C.muted }}>
-        <span
-          style={{
-            display: "inline-block",
-            padding: "2px 6px",
-            borderRadius: 999,
-            background: "#f5f5f5",
-            border: `1px solid ${C.border}`,
-            marginRight: 6,
-            fontWeight: 600,
-          }}
-        >
-          {it.brand}
-        </span>
-        {formatCurrency(it.price)} • estoque {it.stock}
-      </div>
+                        <Input
+                          min="1"
+                          value={it.quantity}
+                          onChange={(e) =>
+                            dispatch({
+                              type: "UPDATE_QTY",
+                              payload: { id: it.id, qty: Number(e.target.value) || 1 },
+                            })
+                          }
+                          style={{
+                            width: 40,
+                            height: 30,
+                            textAlign: "center",
+                            border: "none",
+                            borderRadius: 0,           // <- tira arredondamento interno do Input
+                            background: "transparent",
+                            padding: 0,
+                            fontWeight: 700,
+                            outline: "none",
+                            appearance: "textfield",
+                            MozAppearance: "textfield",
+                          }}
+                        />
 
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-        <span style={{ fontWeight: 900, letterSpacing: ".2px" }}>
-          {formatCurrency(it.total)}
-        </span>
-        <button
-          onClick={() => dispatch({ type: "REMOVE_FROM_CART", payload: it.id })}
-          title="Remover"
-          style={{
-            color: C.red,
-            opacity: 0.9,
-          }}
-        >
-          <TrashIcon style={{ width: 16, height: 16 }} />
-        </button>
-      </div>
-    </div>
-  </div>
-))}
+                        <button
+                          onClick={() =>
+                            dispatch({ type: "UPDATE_QTY", payload: { id: it.id, qty: it.quantity + 1 } })
+                          }
+                          style={{
+                            width: 34,
+                            height: 30,
+                            display: "grid",
+                            placeItems: "center",
+                            background: "#fafafa",
+                            borderLeft: `1px solid ${C.border}`,
+                            lineHeight: 1,
+                            fontSize: 18,
+                            fontWeight: 700,
+                            cursor: "pointer",
+                          }}
+                          aria-label="Aumentar"
+                          onMouseDown={(e) => (e.currentTarget.style.filter = "brightness(.95)")}
+                          onMouseUp={(e) => (e.currentTarget.style.filter = "none")}
+                          onMouseLeave={(e) => (e.currentTarget.style.filter = "none")}
+                        >
+                          +
+                        </button>
+                      </div>
+
+                    </div>
+
+                    {/* Linha 2: meta (esq)  •  total + lixeira (dir) */}
+                    <div
+                      style={{
+                        marginTop: 6,
+                        display: "flex",
+                        alignItems: "baseline",
+                        justifyContent: "space-between",
+                        gap: 8,
+                      }}
+                    >
+                      <div style={{ flex: 1, minWidth: 0, fontSize: 12, color: C.muted }}>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            padding: "2px 6px",
+                            borderRadius: 999,
+                            background: "#f5f5f5",
+                            border: `1px solid ${C.border}`,
+                            marginRight: 6,
+                            fontWeight: 600,
+                          }}
+                        >
+                          {it.brand}
+                        </span>
+                        {formatCurrency(it.price)} • estoque {it.stock}
+                      </div>
+
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontWeight: 900, letterSpacing: ".2px" }}>
+                          {formatCurrency(it.total)}
+                        </span>
+                        <button
+                          onClick={() => dispatch({ type: "REMOVE_FROM_CART", payload: it.id })}
+                          title="Remover"
+                          style={{
+                            color: C.red,
+                            opacity: 0.9,
+                          }}
+                        >
+                          <TrashIcon style={{ width: 16, height: 16 }} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
 
               </div>
             )}
