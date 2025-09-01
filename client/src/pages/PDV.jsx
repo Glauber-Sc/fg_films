@@ -4838,40 +4838,28 @@
 
 
 
-// /* eslint-disable no-unused-vars */
-// /* eslint-disable react-hooks/exhaustive-deps */
 // import React, { useEffect, useMemo, useState } from "react";
 // import { useNavigate } from "react-router-dom";
-// import { Search, Star, Image as ImageIcon, ShoppingCart } from "lucide-react";
+// import { Search, Star, Image as ImageIcon, ShoppingCart, Home } from "lucide-react";
 
-// // IMAGENS (já em src/assets/img)
+// // IMAGENS (em src/assets/img)
 // import maquininhaIcon from "../assets/img/maquininha2.png";
 // import pixIcon from "../assets/img/pix.svg";
-// import boletoIcon from "../assets/img/boleto.svg";
+// import real from "../assets/img/real.png";
 
-// /* --------------------------- UI básica (sem libs) --------------------------- */
-// const Button = ({ label, icon, children, outlined, danger, onClick, style, title }) => {
-//   const base = {
-//     display: "inline-flex",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     gap: ".5rem",
-//     borderRadius: "6px",
-//     padding: ".55rem .9rem",
-//     fontWeight: 600,
-//     cursor: "pointer",
-//     border: outlined ? "1px solid #ea1d2c" : "none",
-//     background: outlined ? "#fff" : danger ? "#b91c1c" : "#ea1d2c",
-//     color: outlined ? "#ea1d2c" : "#fff",
-//     boxShadow: outlined ? "0 2px 4px rgba(0,0,0,.06)" : "0 2px 4px rgba(0,0,0,.15)",
-//     ...style,
-//   };
-//   return (
-//     <button onClick={onClick} style={base} title={title}>
-//       {icon}
-//       {label ?? children}
-//     </button>
-//   );
+// import logo from "../assets/img/logo.png";
+
+
+// /* ============================ Paleta & helpers ============================ */
+// const C = {
+//   red: "#ea1d2c",
+//   redDark: "#d81b28",
+//   border: "#d9d9d9",
+//   text: "#2b2b2b",
+//   muted: "#7a7a7a",
+//   bgApp: "#f3f3f3",
+//   card: "#ffffff",
+//   rightPanel: "#f1f1f1",
 // };
 
 // const Input = ({ style, ...props }) => (
@@ -4879,44 +4867,62 @@
 //     {...props}
 //     style={{
 //       width: "100%",
-//       border: "1px solid #d0d0d0",
-//       borderRadius: "6px",
-//       padding: ".55rem .7rem",
+//       border: `1px solid ${C.border}`,
+//       borderRadius: 8,
+//       padding: "10px 12px",
 //       outline: "none",
+//       fontSize: 14,
+//       color: C.text,
+//       background: "#fff",
 //       ...style,
 //     }}
 //   />
 // );
 
-// const Select = ({ options = [], value, onChange, style, placeholder }) => (
-//   <select
-//     value={value?.code ?? ""}
-//     onChange={(e) =>
-//       onChange &&
-//       onChange({
-//         value:
-//           options.find((o) => o.code === e.target.value) ??
-//           (e.target.value === "" ? null : undefined),
-//       })
-//     }
-//     style={{
-//       width: "100%",
-//       border: "1px solid #d0d0d0",
-//       borderRadius: "6px",
-//       padding: ".55rem .7rem",
-//       outline: "none",
-//       background: "#fff",
-//       ...style,
-//     }}
-//   >
-//     <option value="">{placeholder || "Selecione"}</option>
-//     {options.map((o) => (
-//       <option key={o.code} value={o.code}>
-//         {o.name}
-//       </option>
-//     ))}
-//   </select>
-// );
+// const Select = ({ options = [], value, onChange, style, placeholder }) => {
+//   // caret SVG igual ao do screenshot (leve, cinza)
+//   const caret =
+//     "data:image/svg+xml;utf8," +
+//     encodeURIComponent(
+//       `<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>`
+//     );
+
+//   return (
+//     <select
+//       value={value?.code ?? ""}
+//       onChange={(e) =>
+//         onChange &&
+//         onChange({
+//           value:
+//             options.find((o) => o.code === e.target.value) ??
+//             (e.target.value === "" ? null : undefined),
+//         })
+//       }
+//       style={{
+//         width: "100%",
+//         border: `1px solid ${C.border}`,
+//         borderRadius: 8,
+//         padding: "10px 36px 10px 12px",
+//         outline: "none",
+//         fontSize: 14,
+//         color: C.text,
+//         backgroundColor: "#fff",
+//         appearance: "none",
+//         backgroundImage: `url("${caret}")`,
+//         backgroundRepeat: "no-repeat",
+//         backgroundPosition: "right 12px center",
+//         ...style,
+//       }}
+//     >
+//       <option value="">{placeholder || "Selecione"}</option>
+//       {options.map((o) => (
+//         <option key={o.code} value={o.code}>
+//           {o.name}
+//         </option>
+//       ))}
+//     </select>
+//   );
+// };
 
 // const Checkbox = ({ checked, onChange, id }) => (
 //   <input
@@ -4924,11 +4930,48 @@
 //     type="checkbox"
 //     checked={!!checked}
 //     onChange={(e) => onChange && onChange({ checked: e.target.checked })}
-//     style={{ width: 18, height: 18 }}
+//     style={{
+//       width: 18,
+//       height: 18,
+//       accentColor: C.red,
+//       cursor: "pointer",
+//     }}
 //   />
 // );
 
-// /* --------------------------------- Modal ---------------------------------- */
+// const Button = ({ label, icon, children, outlined, danger, onClick, style, title }) => {
+//   const base = {
+//     display: "inline-flex",
+//     alignItems: "center",
+//     justifyContent: "center",
+//     gap: 8,
+//     borderRadius: 8,
+//     padding: "10px 14px",
+//     fontSize: 14,
+//     fontWeight: 700,
+//     cursor: "pointer",
+//     border: outlined ? `1.5px solid ${danger ? C.red : C.red}` : "none",
+//     background: outlined ? "#fff" : danger ? C.red : C.red,
+//     color: outlined ? C.red : "#fff",
+//     transition: "filter .15s ease",
+//     boxShadow: outlined ? "none" : "0 2px 4px rgba(0,0,0,0.08)",
+//     ...style,
+//   };
+//   return (
+//     <button
+//       onClick={onClick}
+//       title={title}
+//       style={base}
+//       onMouseDown={(e) => (e.currentTarget.style.filter = "brightness(.95)")}
+//       onMouseUp={(e) => (e.currentTarget.style.filter = "none")}
+//       onMouseLeave={(e) => (e.currentTarget.style.filter = "none")}
+//     >
+//       {icon}
+//       {label ?? children}
+//     </button>
+//   );
+// };
+
 // const Modal = ({ open, onClose, title, footer, children }) => {
 //   if (!open) return null;
 //   return (
@@ -4942,37 +4985,31 @@
 //         display: "flex",
 //         alignItems: "center",
 //         justifyContent: "center",
-//         zIndex: 9999,
+//         zIndex: 50,
 //       }}
 //       onClick={onClose}
 //     >
 //       <div
 //         style={{
-//           width: 450,
-//           maxWidth: "90vw",
+//           width: 460,
+//           maxWidth: "92vw",
 //           background: "#fff",
-//           borderRadius: 8,
-//           boxShadow: "0 10px 30px rgba(0,0,0,.25)",
+//           borderRadius: 10,
+//           boxShadow: "0 10px 28px rgba(0,0,0,.25)",
 //           overflow: "hidden",
 //         }}
 //         onClick={(e) => e.stopPropagation()}
 //       >
-//         <div
-//           style={{
-//             padding: "0.9rem 1rem",
-//             borderBottom: "1px solid #eee",
-//             fontWeight: 700,
-//           }}
-//         >
+//         <div style={{ padding: "12px 16px", borderBottom: `1px solid ${C.border}`, fontWeight: 800 }}>
 //           {title}
 //         </div>
-//         <div style={{ padding: "1rem" }}>{children}</div>
+//         <div style={{ padding: 16 }}>{children}</div>
 //         <div
 //           style={{
-//             padding: "0.8rem 1rem",
-//             borderTop: "1px solid #eee",
+//             padding: 12,
+//             borderTop: `1px solid ${C.border}`,
 //             display: "flex",
-//             gap: ".5rem",
+//             gap: 8,
 //             justifyContent: "flex-end",
 //           }}
 //         >
@@ -4983,22 +5020,17 @@
 //   );
 // };
 
-// /* -------------------------------- Helpers --------------------------------- */
 // const formatCPF = (value) => {
 //   const digits = (value || "").replace(/\D/g, "").slice(0, 11);
-//   const parts = [];
-//   if (digits.length > 0) parts.push(digits.slice(0, 3));
-//   if (digits.length >= 4) parts.push(digits.slice(3, 6));
-//   if (digits.length >= 7) parts.push(digits.slice(6, 9));
-//   const sufix = digits.length >= 10 ? digits.slice(9, 11) : digits.slice(9);
-//   const main = parts.join(".");
-//   return sufix ? `${main}-${sufix}` : main;
+//   const p1 = digits.slice(0, 3);
+//   const p2 = digits.slice(3, 6);
+//   const p3 = digits.slice(6, 9);
+//   const p4 = digits.slice(9, 11);
+//   return [p1, p2, p3].filter(Boolean).join(".") + (p4 ? `-${p4}` : "");
 // };
 
 // const downloadCarnet = async () => {
-//   const response = await fetch("http://localhost:3000/gerar-carne", {
-//     method: "GET",
-//   });
+//   const response = await fetch("http://localhost:3000/gerar-carne", { method: "GET" });
 //   const blob = await response.blob();
 //   const url = window.URL.createObjectURL(blob);
 //   const link = document.createElement("a");
@@ -5010,9 +5042,9 @@
 //   window.URL.revokeObjectURL(url);
 // };
 
-// /* ------------------------------ Subcomponentes ----------------------------- */
+// /* ============================== Subcomponentes ============================= */
 // const NavigationSteps = ({ currentStep, setCurrentStep }) => {
-//   const steps = useMemo(
+//   const steps = React.useMemo(
 //     () => [
 //       { label: "Produto (Alt+Z)", key: "produto" },
 //       { label: "Cliente (Alt+C)", key: "cliente" },
@@ -5021,59 +5053,72 @@
 //     []
 //   );
 
+//   const ARROW_W = 18; // largura do ">"
+
 //   return (
 //     <div
 //       style={{
 //         display: "flex",
-//         backgroundColor: "#fff",
-//         borderRadius: "5px",
-//         boxShadow: "0px 2px 4px rgba(0,0,0,0.1)",
-//         marginBottom: "1rem",
+//         background: "#fff",
+//         borderRadius: 8,
+//         marginBottom: 10,
 //         overflow: "hidden",
+//         padding: 4,
+//         border: `1px solid ${C.border}`,
 //       }}
 //     >
-//       {steps.map((step, index) => (
-//         <div
-//           key={step.key}
-//           onClick={() => setCurrentStep(step.key)}
-//           style={{
-//             flex: 1,
-//             padding: "0.5rem 1.5rem",
-//             backgroundColor: currentStep === step.key ? "#ea1d2c" : "#E0E0E0",
-//             color: currentStep === step.key ? "#FFFFFF" : "#555",
-//             fontWeight: currentStep === step.key ? "bold" : "normal",
-//             textAlign: "center",
-//             cursor: "pointer",
-//             display: "flex",
-//             alignItems: "center",
-//             justifyContent: "center",
-//             position: "relative",
-//             transition: "background-color 0.3s, color 0.3s",
-//             userSelect: "none",
-//           }}
-//         >
-//           {step.label}
-//           {index < steps.length - 1 && (
-//             <div
-//               style={{
-//                 width: 0,
-//                 height: 0,
-//                 borderTop: "15px solid transparent",
-//                 borderBottom: "15px solid transparent",
-//                 borderLeft: `15px solid ${
-//                   currentStep === step.key ? "#ea1d2c" : "#E0E0E0"
-//                 }`,
-//                 position: "absolute",
-//                 right: -15,
-//                 zIndex: 1,
-//               }}
-//             />
-//           )}
-//         </div>
-//       ))}
+//       {steps.map((step, index) => {
+//         const active = currentStep === step.key;
+
+//         return (
+//           <div
+//             key={step.key}
+//             onClick={() => setCurrentStep(step.key)}
+//             style={{
+//               flex: 1,
+//               position: "relative",
+//               padding: "10px 16px",
+//               textAlign: "center",
+//               fontWeight: 800,
+//               fontSize: 14,
+//               color: active ? "#fff" : "#666",
+//               background: active ? C.red : "#e1e1e1",
+//               cursor: "pointer",
+//               userSelect: "none",
+//               transition: "background .2s ease",
+//               borderTopLeftRadius: index === 0 ? 6 : 0,
+//               borderBottomLeftRadius: index === 0 ? 6 : 0,
+//               borderTopRightRadius: index === steps.length - 1 ? 6 : 0,
+//               borderBottomRightRadius: index === steps.length - 1 ? 6 : 0,
+//               zIndex: active ? 3 : 1,
+//             }}
+//           >
+//             {step.label}
+
+//             {active && index < steps.length - 1 && (
+//               <div
+//                 style={{
+//                   position: "absolute",
+//                   top: 0,
+//                   bottom: 0,
+//                   left: "calc(100% - 1px)", // <— SOBREPOE 1px para matar a listra
+//                   width: ARROW_W,
+//                   background: C.red,
+//                   clipPath: "polygon(0 0, 100% 50%, 0 100%)",
+//                   zIndex: 4,
+//                   pointerEvents: "none",
+//                 }}
+//               />
+//             )}
+//           </div>
+//         );
+//       })}
 //     </div>
 //   );
 // };
+
+
+
 
 // const GenerateCarnet = ({ totalAmount }) => {
 //   const [open, setOpen] = useState(false);
@@ -5084,7 +5129,7 @@
 //         outlined
 //         label="Cancelar"
 //         onClick={() => setOpen(false)}
-//         style={{ borderColor: "#d0d0d0", color: "#555" }}
+//         style={{ borderColor: C.border, color: "#555" }}
 //       />
 //       <Button
 //         label="Confirmar e Baixar"
@@ -5098,25 +5143,10 @@
 
 //   return (
 //     <>
-//       <Button
-//         outlined
-//         label="Boleto - Gerar Carnê Impresso"
-//         onClick={() => setOpen(true)}
-//         style={{
-//           flex: 1,
-//           maxWidth: 180,
-//           boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.4)",
-//           borderRadius: 5,
-//           display: "flex",
-//           alignItems: "center",
-//           justifyContent: "center",
-//           gap: ".5rem",
-//         }}
-//         icon={<img src={boletoIcon} alt="Boleto Icon" style={{ width: 40, height: 40 }} />}
-//       />
+
 //       <Modal open={open} onClose={() => setOpen(false)} title="Confirme os Dados do Carnê" footer={footer}>
-//         <h5 style={{ marginTop: 0 }}>Resumo do Carnê</h5>
-//         <ul style={{ marginLeft: "1.1rem" }}>
+//         <h5 style={{ marginTop: 0, marginBottom: 8, fontWeight: 800 }}>Resumo do Carnê</h5>
+//         <ul style={{ marginLeft: 18, lineHeight: 1.6 }}>
 //           <li>
 //             Total:{" "}
 //             {typeof totalAmount === "number"
@@ -5130,49 +5160,55 @@
 // };
 
 // const ProdutoStep = ({ priceList, setPriceList, priceListOptions, barcodeReader, setBarcodeReader }) => (
-//   <>
+//   <div>
 //     <Select
 //       value={priceList}
 //       onChange={(e) => setPriceList(e.value)}
 //       options={priceListOptions}
 //       placeholder="Nenhuma lista"
-//       style={{ marginBottom: ".75rem" }}
+//       style={{ marginBottom: 10 }}
 //     />
 
-//     <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+//     <label htmlFor="barcodeReader" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, color: "#555", fontSize: 14 }}>
 //       <Checkbox
 //         id="barcodeReader"
 //         checked={barcodeReader}
 //         onChange={(e) => setBarcodeReader(e.checked)}
 //       />
-//       <label htmlFor="barcodeReader" style={{ marginLeft: ".5rem" }}>
-//         Leitor de código de barras
-//       </label>
-//     </div>
+//       Leitor de código de barras
+//     </label>
 
-//     <Input placeholder="Pesquise por código, descrição ou GTIN" style={{ marginBottom: ".75rem" }} />
+//     <Input placeholder="Pesquise por código, descrição ou GTIN" style={{ marginBottom: 10 }} />
 
 //     <Button
 //       outlined
 //       label="Ver favoritos (Alt+G)"
 //       icon={<Star size={18} />}
-//       style={{ color: "#ea1d2c", borderColor: "#ea1d2c", marginBottom: ".75rem" }}
+//       style={{
+//         width: "100%",
+//         color: C.red,
+//         borderColor: C.red,
+//         background: "#fff",
+//         marginBottom: 12,
+//         justifyContent: "flex-start",
+//         paddingLeft: 14,
+//       }}
 //     />
 
 //     <div
 //       style={{
-//         border: "1px solid #d0d0d0",
-//         borderRadius: "5px",
+//         border: `1px solid ${C.border}`,
+//         borderRadius: 8,
 //         height: 150,
 //         display: "flex",
 //         justifyContent: "center",
 //         alignItems: "center",
-//         backgroundColor: "#f9f9f9",
+//         background: "#f8f8f8",
 //       }}
 //     >
-//       <ImageIcon size={48} color="#c0c0c0" />
+//       <ImageIcon size={38} color="#bdbdbd" />
 //     </div>
-//   </>
+//   </div>
 // );
 
 // const ClienteStep = () => {
@@ -5181,9 +5217,9 @@
 
 //   return (
 //     <div>
-//       <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "1rem" }}>
+//       <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 10 }}>
 //         <div>
-//           <label htmlFor="cpf" style={{ display: "block", marginBottom: ".25rem" }}>
+//           <label htmlFor="cpf" style={{ display: "block", marginBottom: 6, color: "#444", fontSize: 14 }}>
 //             CPF
 //           </label>
 //           <Input
@@ -5195,7 +5231,7 @@
 //           />
 //         </div>
 //         <div>
-//           <label htmlFor="nome" style={{ display: "block", marginBottom: ".25rem" }}>
+//           <label htmlFor="nome" style={{ display: "block", marginBottom: 6, color: "#444", fontSize: 14 }}>
 //             Nome
 //           </label>
 //           <Input id="nome" placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
@@ -5207,83 +5243,103 @@
 
 // const PagamentoStep = ({ valorTotal }) => {
 //   return (
-//     <div style={{ padding: "1rem", maxWidth: "100%", boxSizing: "border-box" }}>
-//       <h5 style={{ margin: "0 0 .5rem" }}>Totais</h5>
+//     <div>
+//       <h5 style={{ margin: "0 0 8px", fontWeight: 800 }}>Totais</h5>
 
-//       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: ".5rem" }}>
+//       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 8 }}>
 //         <div>
-//           <label style={{ fontWeight: "bold", display: "block", marginBottom: ".25rem" }}>Sub total</label>
+//           <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Sub total</label>
 //           <Input type="text" placeholder="Default" />
 //         </div>
 //         <div>
-//           <label style={{ fontWeight: "bold", display: "block", marginBottom: ".25rem" }}>Desconto</label>
+//           <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Desconto</label>
 //           <Input type="text" placeholder="Default" />
 //         </div>
 //         <div>
-//           <label style={{ fontWeight: "bold", display: "block", marginBottom: ".25rem" }}>Desconto</label>
+//           <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Desconto</label>
 //           <Input type="text" placeholder="Default" />
 //         </div>
 //       </div>
 
-//       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+//       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
 //         <div>
-//           <label style={{ fontWeight: "bold", display: "block", marginBottom: ".25rem" }}>Recebido em dinheiro</label>
+//           <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Recebido em dinheiro</label>
 //           <Input type="text" placeholder="Default" />
 //         </div>
 //         <div>
-//           <label style={{ fontWeight: "bold", display: "block", marginBottom: ".25rem" }}>Troco em dinheiro</label>
+//           <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Troco em dinheiro</label>
 //           <Input type="text" placeholder="Default" />
 //         </div>
 //         <div>
-//           <label style={{ fontWeight: "bold", display: "block", marginBottom: ".25rem" }}>Total em venda</label>
+//           <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Total em venda</label>
 //           <Input type="text" placeholder="Default" />
 //         </div>
 //       </div>
 
-//       <h5 style={{ margin: "1rem 0 .5rem" }}>Forma de Pagamento</h5>
+//       <h5 style={{ margin: "12px 0 8px", fontWeight: 800 }}>Forma de Pagamento</h5>
 
-//       <div style={{ display: "flex", gap: "1rem", justifyContent: "space-between", marginBottom: "1rem", flexWrap: "wrap" }}>
+//       <div style={{ display: "flex", gap: 10, justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap" }}>
 //         <GenerateCarnet totalAmount={valorTotal} />
+
+
+//         <Button
+//           outlined
+//           label="Dinheiro"
+//           icon={<img src={real} alt="Real Icon" style={{ width: 32, height: 32 }} />}
+//           style={{
+//             flex: 1,
+//             minWidth: 160,
+//             maxWidth: 200,
+//             background: "#fff",
+//             borderColor: C.red,
+//             color: C.red,
+//           }}
+//         />
+
 
 //         <Button
 //           outlined
 //           label="Pix - Gerar QR Code"
-//           icon={<img src={pixIcon} alt="Pix Icon" style={{ width: 40, height: 40 }} />}
+//           icon={<img src={pixIcon} alt="Pix Icon" style={{ width: 32, height: 32 }} />}
 //           style={{
 //             flex: 1,
-//             maxWidth: 180,
-//             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.4)",
-//             borderRadius: 5,
-//             display: "flex",
-//             alignItems: "center",
-//             justifyContent: "center",
-//             gap: ".5rem",
+//             minWidth: 160,
+//             maxWidth: 200,
+//             background: "#fff",
+//             borderColor: C.red,
+//             color: C.red,
 //           }}
 //         />
 
 //         <Button
 //           outlined
 //           label="Maquininha - Dédito/Credito"
-//           icon={<img src={maquininhaIcon} alt="POS" style={{ width: 50 }} />}
+//           icon={<img src={maquininhaIcon} alt="POS" style={{ width: 44 }} />}
 //           style={{
 //             flex: 1,
-//             maxWidth: 180,
-//             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.4)",
-//             borderRadius: 5,
-//             padding: ".5rem",
+//             minWidth: 160,
+//             maxWidth: 200,
+//             background: "#fff",
+//             borderColor: C.red,
+//             color: C.red,
 //           }}
 //         />
 //       </div>
 
 //       <Button
 //         label="Ative o Pix com a Bling Conta"
-//         style={{ backgroundColor: "#ea1d2c", color: "white", width: "100%", marginBottom: "1rem", maxWidth: "100%" }}
+//         style={{
+//           backgroundColor: C.red,
+//           color: "white",
+//           width: "100%",
+//           marginTop: 4,
+//         }}
 //       />
 //     </div>
 //   );
 // };
 
-// /* ----------------------------------- PDV ---------------------------------- */
+// /* ==================================== PDV ==================================== */
 // const PDV = () => {
 //   const [priceList, setPriceList] = useState(null);
 //   const [barcodeReader, setBarcodeReader] = useState(false);
@@ -5291,11 +5347,8 @@
 //   const priceListOptions = [{ name: "Nenhuma lista", code: "none" }];
 //   const navigate = useNavigate();
 
-//   // simulação de produtos
-//   const [produtos, setProdutos] = useState([
-//     { codigo: "001", nome: "Produto A", quantidade: 1, valorUnitario: 50.0 },
-//     { codigo: "002", nome: "Produto B", quantidade: 2, valorUnitario: 30.0 },
-//   ]);
+//   // mock
+//   const [produtos] = useState([]);
 
 //   const redirectToDashboard = () => navigate("/");
 
@@ -5306,9 +5359,8 @@
 //     window.addEventListener("keydown", handleKeyDown);
 //     return () => {
 //       window.removeEventListener("keydown", handleKeyDown);
-//       // ao sair do PDV, tenta sair do fullscreen
 //       if (document.fullscreenElement && document.exitFullscreen) {
-//         document.exitFullscreen().catch(() => {});
+//         document.exitFullscreen().catch(() => { });
 //       }
 //     };
 //   }, []);
@@ -5341,117 +5393,171 @@
 //         flexDirection: "column",
 //         height: "100vh",
 //         overflow: "hidden",
-//         backgroundColor: "#f5f5f5",
-//         position: "relative",
+//         background: C.bgApp,
 //       }}
 //     >
 //       {/* Header */}
 //       <div
 //         style={{
-//           backgroundColor: "#ea1d2c",
+//           background: C.red,
 //           color: "white",
-//           padding: "0.5rem 1rem",
+//           padding: "8px 12px",
 //           display: "flex",
 //           justifyContent: "space-between",
 //           alignItems: "center",
-//           boxShadow: "0px 2px 4px rgba(0,0,0,0.1)",
+//           boxShadow: "0 2px 4px rgba(0,0,0,.12)",
 //         }}
 //       >
-//         <h2 style={{ margin: 0 }}>Venda-PRO</h2>
-//         <div style={{ display: "flex", alignItems: "center", gap: ".5rem" }}>
-//           <div style={{ position: "relative", width: 300, maxWidth: "50vw" }}>
+//         <img
+//           src={logo}
+//           alt="Venda-PRO"
+//           style={{ height: 60, width: 150, display: "block" }}
+//         />
+
+
+//         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+//           <div style={{ position: "relative", width: 320, maxWidth: "48vw" }}>
 //             <Search
-//               size={18}
+//               size={16}
 //               style={{
 //                 position: "absolute",
-//                 right: 10,
+//                 right: 36,
 //                 top: "50%",
 //                 transform: "translateY(-50%)",
-//                 color: "#555",
-//                 pointerEvents: "none",
+//                 color: "#666",
 //               }}
 //             />
-//             <Input placeholder="Buscar venda - (Alt+P)" style={{ paddingRight: 32, background: "#fff" }} />
+//             <Input
+//               placeholder="Buscar venda - (Alt+P)"
+//               style={{
+//                 paddingRight: 44,
+//                 background: "#fff",
+//                 borderColor: "#efefef",
+//                 fontWeight: 600,
+//               }}
+//             />
 //           </div>
+
+//           {/* Botão home (branco com borda vermelha) */}
 //           <Button
 //             outlined
 //             title="Voltar ao Dashboard"
 //             icon={
-//               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-//                 <path d="M3 12L12 3l9 9" stroke="#ea1d2c" strokeWidth="2" />
-//                 <path d="M9 21V9h6v12" stroke="#ea1d2c" strokeWidth="2" />
-//               </svg>
+//               <Home size={170} color="#EA1D2C" />
 //             }
 //             onClick={redirectToDashboard}
-//             style={{ backgroundColor: "#FFF", color: "#ea1d2c", padding: ".5rem" }}
+//             style={{
+//               background: "#fff",
+//               color: C.red,
+//               borderColor: "#ffd8dc",
+//               padding: 10,
+//               width: 38,
+//               height: 38,
+//               display: "inline-flex",
+//               alignItems: "center",
+//               justifyContent: "center",
+//             }}
 //           />
 //         </div>
 //       </div>
 
-//       {/* Main */}
-//       <div style={{ display: "flex", flexGrow: 1, padding: "1rem", gap: "1rem", marginBottom: 80 }}>
-//         {/* Left */}
+//       {/* Conteúdo */}
+//       <div style={{ display: "flex", flexGrow: 1, gap: 16, padding: 8, marginBottom: 86 }}>
+//         {/* Coluna esquerda */}
 //         <div
 //           style={{
-//             width: "60%",
-//             minWidth: 320,
+//             flexBasis: "43%",
+//             minWidth: 420,
 //             display: "flex",
 //             flexDirection: "column",
-//             backgroundColor: "#fff",
-//             borderRadius: "8px",
-//             padding: "1rem",
-//             boxShadow: "0px 2px 4px rgba(0,0,0,0.1)",
+//             background: C.card,
+//             borderRadius: 10,
+//             padding: 10,
+//             border: `1px solid ${C.border}`,
 //           }}
 //         >
 //           <NavigationSteps currentStep={currentStep} setCurrentStep={setCurrentStep} />
 //           {renderStepContent()}
 //         </div>
 
-//         {/* Right */}
+//         {/* Coluna direita */}
 //         <div
 //           style={{
-//             width: "70%",
-//             minWidth: 360,
+//             flexBasis: "57%",
+//             minWidth: 520,
+//             background: C.rightPanel,
+//             borderRadius: 10,
+//             border: `1px solid ${C.border}`,
 //             display: "flex",
-//             flexDirection: "column",
 //             alignItems: "center",
 //             justifyContent: "center",
-//             backgroundColor: "#f5f5f5",
-//             borderRadius: "8px",
-//             boxShadow: "0px 2px 4px rgba(0,0,0,0.1)",
+//             position: "relative",
 //           }}
 //         >
-//           <div style={{ textAlign: "center", color: "#ea1d2c", fontSize: "1.2em", fontWeight: "bold" }}>
-//             Nenhum produto registrado
-//           </div>
-//           <div style={{ fontSize: "5em", color: "#e0e0e0", marginTop: "1rem" }}>
-//             <ShoppingCart size={64} color="#c0c0c0" />
-//           </div>
+//           {produtos.length === 0 ? (
+//             <>
+//               <div
+//                 style={{
+//                   position: "absolute",
+//                   top: 18,
+//                   color: C.red,
+//                   fontWeight: 800,
+//                 }}
+//               >
+//                 Nenhum produto registrado
+//               </div>
+//               <ShoppingCart size={170} color="#c9c9c9" />
+//             </>
+//           ) : (
+//             <div> {/* sua lista de produtos aqui */}</div>
+//           )}
 //         </div>
 //       </div>
 
-//       {/* Footer */}
+//       {/* Rodapé fixo */}
 //       <div
 //         style={{
-//           backgroundColor: "#ffffff",
-//           padding: "1rem",
+//           background: "#fff",
+//           padding: 12,
 //           display: "flex",
 //           justifyContent: "space-between",
 //           alignItems: "center",
-//           borderTop: "1px solid #d0d0d0",
-//           boxShadow: "0px -2px 4px rgba(0,0,0,0.1)",
+//           borderTop: `1px solid ${C.border}`,
+//           boxShadow: "0 -2px 6px rgba(0,0,0,.06)",
 //           position: "fixed",
 //           bottom: 0,
 //           left: 0,
 //           right: 0,
-//           zIndex: 1000,
+//           zIndex: 10,
 //         }}
 //       >
-//         <Button outlined danger label="Excluir venda (Alt+Q)" />
-//         <Button label="Finalizar venda (Alt+S)" style={{ marginRight: "18%" }} />
-//         <div style={{ fontSize: "1.5rem", color: "#333" }}>
-//           Total
-//           <span style={{ fontSize: "3.5rem", fontWeight: "bold", marginLeft: ".5rem" }}>R$ 0,00</span>
+//         <Button
+//           outlined
+//           danger
+//           label="Excluir venda (Alt+Q)"
+//           style={{
+//             background: "#fff",
+//             color: C.red,
+//             borderColor: "#ffccd2",
+//             paddingLeft: 16,
+//             paddingRight: 16,
+//           }}
+//         />
+
+//         <Button
+//           label="Finalizar venda (Alt+S)"
+//           style={{
+//             background: C.red,
+//             margin: "0 auto",
+//             borderRadius: 8,
+//             paddingLeft: 18,
+//             paddingRight: 18,
+//           }}
+//         />
+
+//         <div style={{ display: "flex", alignItems: "baseline", gap: 10, color: "#333" }}>
+//           <div style={{ fontSize: 18, fontWeight: 600 }}>Total</div>
+//           <div style={{ fontSize: 44, fontWeight: 900, letterSpacing: ".5px" }}>R$ 0,00</div>
 //         </div>
 //       </div>
 //     </div>
@@ -5460,18 +5566,35 @@
 
 // export default React.memo(PDV);
 
-
-
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState } from "react";
+// src/pages/PDVPro.jsx — UI do seu layout novo + lógica real (reducer, API, recibo, etc.)
+import React, { useReducer, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Star, Image as ImageIcon, ShoppingCart, Home} from "lucide-react";
+import { toast } from "react-toastify";
+import {
+  // básicos para a UI
+  MagnifyingGlassIcon,
+  PhotoIcon,
+  ShoppingCartIcon,
+  HomeIcon,
+  PlusIcon,
+  MinusIcon,
+  TrashIcon,
+  CreditCardIcon,
+  UserPlusIcon,
+  PrinterIcon,
+  ArrowPathIcon,
+  PauseIcon,
+  PlayIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { formatCurrency } from "../utils/format";
+import { fetchProducts, createSale, fetchCustomers, createCustomer } from "../services/api";
 
 // IMAGENS (em src/assets/img)
 import maquininhaIcon from "../assets/img/maquininha2.png";
 import pixIcon from "../assets/img/pix.svg";
 import real from "../assets/img/real.png";
+import logo from "../assets/img/logo.png";
 
 /* ============================ Paleta & helpers ============================ */
 const C = {
@@ -5502,8 +5625,25 @@ const Input = ({ style, ...props }) => (
   />
 );
 
+const TextArea = ({ style, ...props }) => (
+  <textarea
+    {...props}
+    style={{
+      width: "100%",
+      border: `1px solid ${C.border}`,
+      borderRadius: 8,
+      padding: "10px 12px",
+      outline: "none",
+      fontSize: 14,
+      color: C.text,
+      background: "#fff",
+      resize: "vertical",
+      ...style,
+    }}
+  />
+);
+
 const Select = ({ options = [], value, onChange, style, placeholder }) => {
-  // caret SVG igual ao do screenshot (leve, cinza)
   const caret =
     "data:image/svg+xml;utf8," +
     encodeURIComponent(
@@ -5512,15 +5652,8 @@ const Select = ({ options = [], value, onChange, style, placeholder }) => {
 
   return (
     <select
-      value={value?.code ?? ""}
-      onChange={(e) =>
-        onChange &&
-        onChange({
-          value:
-            options.find((o) => o.code === e.target.value) ??
-            (e.target.value === "" ? null : undefined),
-        })
-      }
+      value={value ?? ""}
+      onChange={(e) => onChange && onChange(e.target.value || "")}
       style={{
         width: "100%",
         border: `1px solid ${C.border}`,
@@ -5539,8 +5672,8 @@ const Select = ({ options = [], value, onChange, style, placeholder }) => {
     >
       <option value="">{placeholder || "Selecione"}</option>
       {options.map((o) => (
-        <option key={o.code} value={o.code}>
-          {o.name}
+        <option key={o.value ?? o.code ?? o.id} value={o.value ?? o.code ?? o.id}>
+          {o.label ?? o.name}
         </option>
       ))}
     </select>
@@ -5552,17 +5685,12 @@ const Checkbox = ({ checked, onChange, id }) => (
     id={id}
     type="checkbox"
     checked={!!checked}
-    onChange={(e) => onChange && onChange({ checked: e.target.checked })}
-    style={{
-      width: 18,
-      height: 18,
-      accentColor: C.red,
-      cursor: "pointer",
-    }}
+    onChange={(e) => onChange && onChange(e.target.checked)}
+    style={{ width: 18, height: 18, accentColor: C.red, cursor: "pointer" }}
   />
 );
 
-const Button = ({ label, icon, children, outlined, danger, onClick, style, title }) => {
+const Button = ({ label, icon, children, outlined, danger, onClick, style, title, disabled }) => {
   const base = {
     display: "inline-flex",
     alignItems: "center",
@@ -5572,7 +5700,8 @@ const Button = ({ label, icon, children, outlined, danger, onClick, style, title
     padding: "10px 14px",
     fontSize: 14,
     fontWeight: 700,
-    cursor: "pointer",
+    cursor: disabled ? "not-allowed" : "pointer",
+    opacity: disabled ? 0.6 : 1,
     border: outlined ? `1.5px solid ${danger ? C.red : C.red}` : "none",
     background: outlined ? "#fff" : danger ? C.red : C.red,
     color: outlined ? C.red : "#fff",
@@ -5582,12 +5711,13 @@ const Button = ({ label, icon, children, outlined, danger, onClick, style, title
   };
   return (
     <button
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
       title={title}
       style={base}
       onMouseDown={(e) => (e.currentTarget.style.filter = "brightness(.95)")}
       onMouseUp={(e) => (e.currentTarget.style.filter = "none")}
       onMouseLeave={(e) => (e.currentTarget.style.filter = "none")}
+      disabled={disabled}
     >
       {icon}
       {label ?? children}
@@ -5614,7 +5744,7 @@ const Modal = ({ open, onClose, title, footer, children }) => {
     >
       <div
         style={{
-          width: 460,
+          width: 520,
           maxWidth: "92vw",
           background: "#fff",
           borderRadius: 10,
@@ -5643,29 +5773,220 @@ const Modal = ({ open, onClose, title, footer, children }) => {
   );
 };
 
-const formatCPF = (value) => {
-  const digits = (value || "").replace(/\D/g, "").slice(0, 11);
-  const p1 = digits.slice(0, 3);
-  const p2 = digits.slice(3, 6);
-  const p3 = digits.slice(6, 9);
-  const p4 = digits.slice(9, 11);
-  return [p1, p2, p3].filter(Boolean).join(".") + (p4 ? `-${p4}` : "");
+/* ============================== Domínios ============================= */
+const MACHINE_OPTIONS = [
+  { id: "machine_a", name: "Máquina A" },
+  { id: "machine_b", name: "Máquina B" },
+  { id: "machine_c", name: "Máquina C" },
+];
+
+const PAYMENT_METHODS = ["Dinheiro", "PIX", "Cartão de Crédito", "Cartão de Débito", "Transferência"];
+
+const PARKED_KEY = "pdv_parked_sales_v1";
+
+const initialState = {
+  products: [],
+  customers: [],
+  filteredProducts: [],
+  isLoading: true,
+  searchTerm: "",
+  cart: [], // {id,name,brand,price,quantity,stock,total}
+  selectedCustomerId: "",
+  quickCustomerName: "",
+  showQuickCustomer: false,
+  payments: [], // {id, method, amount, machine?, installments?}
+  discountValue: 0,
+  discountPct: 0,
+  surchargeValue: 0,
+  printReceipt: true,
+  notes: "",
+  parked: [], // [{id, createdAt, snapshot}]
 };
+
+function readParked() {
+  try {
+    const raw = localStorage.getItem(PARKED_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+function writeParked(arr) {
+  localStorage.setItem(PARKED_KEY, JSON.stringify(arr));
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "SET_DATA": {
+      const { products, customers } = action.payload;
+      const available = products.filter((p) => Number(p.stock) > 0);
+      return { ...state, products, customers, filteredProducts: available, isLoading: false, parked: readParked() };
+    }
+    case "SET_LOADING":
+      return { ...state, isLoading: action.payload };
+    case "SET_SEARCH": {
+      const searchTerm = action.payload.trim().toLowerCase();
+      const filtered = searchTerm
+        ? state.products.filter((p) => `${p.name} ${p.brand} ${p.code ?? ""}`.toLowerCase().includes(searchTerm))
+        : state.products.filter((p) => Number(p.stock) > 0);
+      return { ...state, searchTerm: action.payload, filteredProducts: filtered };
+    }
+
+    // CART
+    case "ADD_TO_CART": {
+      const p = action.payload;
+      const existing = state.cart.find((i) => i.id === p.id);
+      if (existing) {
+        if (existing.quantity >= p.stock) {
+          toast.warning(`Estoque máximo atingido para ${p.name}`);
+          return state;
+        }
+        const cart = state.cart.map((i) =>
+          i.id === p.id ? { ...i, quantity: i.quantity + 1, total: (i.quantity + 1) * i.price } : i
+        );
+        return { ...state, cart };
+      }
+      return {
+        ...state,
+        cart: [
+          ...state.cart,
+          { id: p.id, name: p.name, brand: p.brand, price: Number(p.price) || 0, quantity: 1, stock: Number(p.stock) || 0, total: Number(p.price) || 0 },
+        ],
+      };
+    }
+    case "REMOVE_FROM_CART":
+      return { ...state, cart: state.cart.filter((i) => i.id !== action.payload) };
+    case "UPDATE_QTY": {
+      const { id, qty } = action.payload;
+      if (qty <= 0) return state;
+      const it = state.cart.find((i) => i.id === id);
+      if (!it) return state;
+      if (qty > it.stock) {
+        toast.warning(`Estoque máximo atingido para ${it.name}`);
+        return state;
+      }
+      const cart = state.cart.map((i) => (i.id === id ? { ...i, quantity: qty, total: qty * i.price } : i));
+      return { ...state, cart };
+    }
+    case "CLEAR_CART":
+      return { ...state, cart: [] };
+
+    // CLIENTE
+    case "SET_CUSTOMER":
+      return { ...state, selectedCustomerId: action.payload };
+    case "SET_QUICK_CUSTOMER":
+      return { ...state, quickCustomerName: action.payload };
+    case "TOGGLE_QUICK_CUSTOMER":
+      return { ...state, showQuickCustomer: !state.showQuickCustomer };
+
+    // PAGAMENTOS
+    case "ADD_PAYMENT": {
+      const remaining = action.payload;
+      if (remaining <= 0) {
+        toast.info("Nada a adicionar — total já coberto.");
+        return state;
+      }
+      const pm = { id: Date.now(), method: "Dinheiro", amount: Number(remaining.toFixed(2)), machine: "", installments: 1 };
+      return { ...state, payments: [...state.payments, pm] };
+    }
+    case "UPDATE_PAYMENT": {
+      const { id, field, value } = action.payload;
+      const payments = state.payments.map((pm) =>
+        pm.id === id
+          ? {
+              ...pm,
+              [field]: field === "amount" || field === "installments" ? Number(value) || 0 : value,
+              ...(field === "method" && value !== "Cartão de Crédito" && value !== "Cartão de Débito"
+                ? { machine: "", installments: 1 }
+                : {}),
+            }
+          : pm
+      );
+      return { ...state, payments };
+    }
+    case "REMOVE_PAYMENT":
+      return { ...state, payments: state.payments.filter((p) => p.id !== action.payload) };
+    case "CLEAR_PAYMENTS":
+      return { ...state, payments: [] };
+
+    // TOTAIS
+    case "SET_DISCOUNT_VALUE":
+      return { ...state, discountValue: Number(action.payload) || 0, discountPct: 0 };
+    case "SET_DISCOUNT_PCT":
+      return { ...state, discountPct: Number(action.payload) || 0 };
+    case "SET_SURCHARGE":
+      return { ...state, surchargeValue: Number(action.payload) || 0 };
+
+    // OUTROS
+    case "SET_PRINT":
+      return { ...state, printReceipt: !!action.payload };
+    case "SET_NOTES":
+      return { ...state, notes: action.payload };
+
+    // ESTACIONAR
+    case "LOAD_PARKED":
+      return { ...state, parked: readParked() };
+    case "PARK_CURRENT": {
+      const snapshot = {
+        cart: state.cart,
+        payments: state.payments,
+        selectedCustomerId: state.selectedCustomerId,
+        discountValue: state.discountValue,
+        discountPct: state.discountPct,
+        surchargeValue: state.surchargeValue,
+        notes: state.notes,
+      };
+      const entry = { id: Date.now(), createdAt: new Date().toISOString(), snapshot };
+      const next = [entry, ...state.parked];
+      writeParked(next);
+      toast.success("Venda estacionada!");
+      return { ...state, parked: next };
+    }
+    case "RESUME_PARKED": {
+      const id = action.payload;
+      const entry = state.parked.find((p) => p.id === id);
+      if (!entry) return state;
+      return { ...state, ...entry.snapshot };
+    }
+    case "DELETE_PARKED": {
+      const id = action.payload;
+      const next = state.parked.filter((p) => p.id !== id);
+      writeParked(next);
+      return { ...state, parked: next };
+    }
+
+    case "RESET_ALL":
+      return {
+        ...initialState,
+        products: state.products,
+        customers: state.customers,
+        filteredProducts: state.filteredProducts,
+        parked: state.parked,
+        isLoading: false,
+      };
+    default:
+      return state;
+  }
+}
 
 const downloadCarnet = async () => {
-  const response = await fetch("http://localhost:3000/gerar-carne", { method: "GET" });
-  const blob = await response.blob();
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "carne-pagamento-12x.pdf";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.URL.revokeObjectURL(url);
+  try {
+    const response = await fetch("http://localhost:3000/gerar-carne", { method: "GET" });
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "carne-pagamento-12x.pdf";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (e) {
+    toast.error("Falha ao gerar carnê");
+  }
 };
 
-/* ============================== Subcomponentes ============================= */
+/* ============================== Subcomponentes UI ============================= */
 const NavigationSteps = ({ currentStep, setCurrentStep }) => {
   const steps = React.useMemo(
     () => [
@@ -5675,9 +5996,7 @@ const NavigationSteps = ({ currentStep, setCurrentStep }) => {
     ],
     []
   );
-
-  const ARROW_W = 18; // largura do ">"
-
+  const ARROW_W = 18;
   return (
     <div
       style={{
@@ -5692,7 +6011,6 @@ const NavigationSteps = ({ currentStep, setCurrentStep }) => {
     >
       {steps.map((step, index) => {
         const active = currentStep === step.key;
-
         return (
           <div
             key={step.key}
@@ -5717,14 +6035,13 @@ const NavigationSteps = ({ currentStep, setCurrentStep }) => {
             }}
           >
             {step.label}
-
             {active && index < steps.length - 1 && (
               <div
                 style={{
                   position: "absolute",
                   top: 0,
                   bottom: 0,
-                  left: "calc(100% - 1px)", // <— SOBREPOE 1px para matar a listra
+                  left: "calc(100% - 1px)",
                   width: ARROW_W,
                   background: C.red,
                   clipPath: "polygon(0 0, 100% 50%, 0 100%)",
@@ -5740,266 +6057,531 @@ const NavigationSteps = ({ currentStep, setCurrentStep }) => {
   );
 };
 
+/* ============================== Tela principal ============================= */
+export default function PDVPro() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [currentStep, setCurrentStep] = useState("produto");
+  const [barcodeReader, setBarcodeReader] = useState(false);
+  const searchRef = useRef(null);
+  const navigate = useNavigate();
 
+  // Load data
+  useEffect(() => {
+    (async () => {
+      try {
+        dispatch({ type: "SET_LOADING", payload: true });
+        const [prods, custs] = await Promise.all([fetchProducts(), fetchCustomers()]);
+        dispatch({ type: "SET_DATA", payload: { products: prods, customers: custs } });
+      } catch (e) {
+        console.error(e);
+        toast.error("Erro ao carregar dados");
+      } finally {
+        dispatch({ type: "SET_LOADING", payload: false });
+      }
+    })();
+  }, []);
 
+  // Totais
+  const subtotal = useMemo(() => state.cart.reduce((s, i) => s + i.total, 0), [state.cart]);
+  const discountFromPct = useMemo(() => {
+    const pct = Math.max(0, Math.min(100, state.discountPct || 0));
+    return Number(((subtotal * pct) / 100).toFixed(2));
+  }, [subtotal, state.discountPct]);
+  const discount = state.discountPct > 0 ? discountFromPct : Math.min(state.discountValue || 0, subtotal);
+  const surcharge = Math.max(0, state.surchargeValue || 0);
+  const totalDue = useMemo(() => Math.max(0, Number((subtotal - discount + surcharge).toFixed(2))), [subtotal, discount, surcharge]);
+  const totalPayments = useMemo(() => state.payments.reduce((s, p) => s + (Number(p.amount) || 0), 0), [state.payments]);
+  const remaining = Number((totalDue - totalPayments).toFixed(2));
+  const change = remaining < 0 ? Math.abs(remaining) : 0;
 
-const GenerateCarnet = ({ totalAmount }) => {
-  const [open, setOpen] = useState(false);
+  // Atalhos
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.altKey && (e.key === "z" || e.key === "Z")) setCurrentStep("produto");
+      if (e.altKey && (e.key === "c" || e.key === "C")) setCurrentStep("cliente");
+      if (e.altKey && (e.key === "b" || e.key === "B")) setCurrentStep("pagamento");
 
-  const footer = (
-    <>
-      <Button
-        outlined
-        label="Cancelar"
-        onClick={() => setOpen(false)}
-        style={{ borderColor: C.border, color: "#555" }}
-      />
-      <Button
-        label="Confirmar e Baixar"
-        onClick={async () => {
-          await downloadCarnet();
-          setOpen(false);
-        }}
-      />
-    </>
-  );
+      if (e.key === "F4") {
+        e.preventDefault();
+        searchRef.current?.focus();
+      } else if (e.key === "F2") {
+        e.preventDefault();
+        dispatch({ type: "ADD_PAYMENT", payload: Math.max(0, totalDue - totalPayments) });
+      } else if (e.key === "F3") {
+        e.preventDefault();
+        handleFinalize();
+      } else if (e.altKey && (e.key === "q" || e.key === "Q")) {
+        e.preventDefault();
+        dispatch({ type: "RESET_ALL" });
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        navigate("/");
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
-  return (
-    <>
+  const addDefaultPaymentIfEmpty = () => {
+    if (state.cart.length === 0) return toast.error("Adicione produtos ao carrinho.");
+    if (state.payments.length === 0) dispatch({ type: "ADD_PAYMENT", payload: totalDue });
+  };
 
-      <Modal open={open} onClose={() => setOpen(false)} title="Confirme os Dados do Carnê" footer={footer}>
-        <h5 style={{ marginTop: 0, marginBottom: 8, fontWeight: 800 }}>Resumo do Carnê</h5>
-        <ul style={{ marginLeft: 18, lineHeight: 1.6 }}>
-          <li>
-            Total:{" "}
-            {typeof totalAmount === "number"
-              ? totalAmount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-              : "—"}
-          </li>
-        </ul>
-      </Modal>
-    </>
-  );
-};
+  const handleQuickCustomerAdd = async () => {
+    const name = state.quickCustomerName?.trim();
+    if (!name) return toast.error("Digite o nome do cliente.");
+    try {
+      const created = await createCustomer({ name });
+      toast.success("Cliente adicionado");
+      dispatch({ type: "SET_DATA", payload: { products: state.products, customers: [...state.customers, created] } });
+      dispatch({ type: "SET_CUSTOMER", payload: created.id });
+      dispatch({ type: "SET_QUICK_CUSTOMER", payload: "" });
+      if (state.showQuickCustomer) dispatch({ type: "TOGGLE_QUICK_CUSTOMER" });
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao adicionar cliente");
+    }
+  };
 
-const ProdutoStep = ({ priceList, setPriceList, priceListOptions, barcodeReader, setBarcodeReader }) => (
-  <div>
-    <Select
-      value={priceList}
-      onChange={(e) => setPriceList(e.value)}
-      options={priceListOptions}
-      placeholder="Nenhuma lista"
-      style={{ marginBottom: 10 }}
-    />
+  const validateBeforeFinalize = () => {
+    if (state.cart.length === 0) return toast.error("Carrinho vazio."), false;
+    if (state.payments.length === 0) return toast.error("Adicione um método de pagamento."), false;
+    if (totalPayments + 0.001 < totalDue) return toast.error("Pagamentos devem cobrir o total."), false;
+    const cardPays = state.payments.filter((p) => p.method === "Cartão de Crédito" || p.method === "Cartão de Débito");
+    if (cardPays.some((p) => !p.machine)) return toast.error("Selecione a máquina para todos cartões."), false;
+    return true;
+  };
 
-    <label htmlFor="barcodeReader" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, color: "#555", fontSize: 14 }}>
-      <Checkbox
-        id="barcodeReader"
-        checked={barcodeReader}
-        onChange={(e) => setBarcodeReader(e.checked)}
-      />
-      Leitor de código de barras
-    </label>
+  const openReceipt = (payload) => {
+    try {
+      const toBRL = (n) => (Number(n) || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+      const d = new Date(payload.date);
+      const itemsRows = payload.items
+        .map(
+          (it) =>
+            `<tr><td>${it.name}</td><td style="text-align:right">${it.qty}</td><td style="text-align:right">${toBRL(it.unitPrice)}</td><td style="text-align:right">${toBRL(it.total)}</td></tr>`
+        )
+        .join("");
+      const payRows = (payload.payments || [])
+        .map(
+          (pm) =>
+            `<div>${pm.method}${pm.machine ? " (" + pm.machine + ")" : ""}${pm.installments > 1 ? ` ${pm.installments}x` : ""}: <strong>${toBRL(
+              pm.amount
+            )}</strong></div>`
+        )
+        .join("");
+      const html = `<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Recibo</title>
+      <style>body{font-family:Arial,sans-serif;margin:16px}h1{font-size:18px;margin:0}small{color:#555}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px solid #eee;padding:6px 4px;font-size:12px}.right{text-align:right}.tot{margin-top:8px;border-top:1px dashed #333;padding-top:8px}</style>
+      <body><h1>Recibo de Venda</h1><small>${d.toLocaleString("pt-BR")}</small>
+      <div style="margin-top:6px">Cliente: <strong>${payload.customerName || "—"}</strong></div>
+      <table><thead><tr><th>Produto</th><th class="right">Qtd</th><th class="right">Unit.</th><th class="right">Total</th></tr></thead><tbody>${itemsRows}</tbody></table>
+      <div class="tot"><div>Subtotal: <strong>${toBRL(payload.subtotal)}</strong></div>
+      <div>Desconto: <strong>${toBRL(payload.discount)}</strong> &nbsp; Acréscimo: <strong>${toBRL(payload.surcharge)}</strong></div>
+      <div>Total: <strong>${toBRL(payload.total)}</strong></div>${payload.change > 0 ? `<div>Troco: <strong>${toBRL(payload.change)}</strong></div>` : ""}</div>
+      <div style="margin-top:8px">${payRows}</div>${payload.notes ? `<div style="margin-top:8px"><em>${payload.notes}</em></div>` : ""}
+      <script>window.onload=()=>{window.print()}</script></body></html>`;
+      const w = window.open("", "_blank");
+      w.document.write(html);
+      w.document.close();
+    } catch {}
+  };
 
-    <Input placeholder="Pesquise por código, descrição ou GTIN" style={{ marginBottom: 10 }} />
+  const handleFinalize = async () => {
+    if (!validateBeforeFinalize()) return;
+    const customerName = state.selectedCustomerId
+      ? state.customers.find((c) => c.id === state.selectedCustomerId)?.name || "Cliente não identificado"
+      : "Cliente não identificado";
 
-    <Button
-      outlined
-      label="Ver favoritos (Alt+G)"
-      icon={<Star size={18} />}
-      style={{
-        width: "100%",
-        color: C.red,
-        borderColor: C.red,
-        background: "#fff",
-        marginBottom: 12,
-        justifyContent: "flex-start",
-        paddingLeft: 14,
-      }}
-    />
+    const payload = {
+      customerId: state.selectedCustomerId || null,
+      customerName,
+      items: state.cart.map((i) => ({ productId: i.id, name: i.name, qty: i.quantity, unitPrice: i.price, total: i.total })),
+      payments: state.payments,
+      subtotal,
+      discount,
+      surcharge,
+      total: totalDue,
+      change,
+      notes: state.notes?.trim() || undefined,
+      date: new Date().toISOString(),
+    };
 
-    <div
-      style={{
-        border: `1px solid ${C.border}`,
-        borderRadius: 8,
-        height: 150,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#f8f8f8",
-      }}
-    >
-      <ImageIcon size={38} color="#bdbdbd" />
-    </div>
-  </div>
-);
+    try {
+      await createSale(payload);
+      toast.success("Venda finalizada!");
+      if (state.printReceipt) openReceipt(payload);
+      dispatch({ type: "RESET_ALL" });
+      const prods = await fetchProducts();
+      dispatch({ type: "SET_DATA", payload: { products: prods, customers: state.customers } });
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao finalizar venda");
+    }
+  };
 
-const ClienteStep = () => {
-  const [cpf, setCpf] = useState("");
-  const [nome, setNome] = useState("");
+  const firstFiltered = state.filteredProducts[0];
 
-  return (
+  /* ============================== Steps ============================= */
+  const ProdutoStep = () => (
     <div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 10 }}>
-        <div>
-          <label htmlFor="cpf" style={{ display: "block", marginBottom: 6, color: "#444", fontSize: 14 }}>
-            CPF
-          </label>
-          <Input
-            id="cpf"
-            inputMode="numeric"
-            placeholder="999.999.999-99"
-            value={cpf}
-            onChange={(e) => setCpf(formatCPF(e.target.value))}
-          />
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+        <Input
+          ref={searchRef}
+          placeholder="F4 para focar — pesquise por nome, marca ou código (Enter adiciona 1º)"
+          value={state.searchTerm}
+          onChange={(e) => dispatch({ type: "SET_SEARCH", payload: e.target.value })}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && firstFiltered) dispatch({ type: "ADD_TO_CART", payload: firstFiltered });
+          }}
+          style={{ flex: 1 }}
+        />
+        <Button
+          title="F2 — adiciona método com o restante"
+          onClick={addDefaultPaymentIfEmpty}
+          icon={<CreditCardIcon style={{ width: 18, height: 18 }} />}
+          outlined
+          style={{ padding: "10px 12px" }}
+        />
+        <Button
+          title="Estacionar venda atual"
+          onClick={() => {
+            dispatch({ type: "PARK_CURRENT" });
+            dispatch({ type: "RESET_ALL" });
+          }}
+          outlined
+          style={{ background: "#fff", color: "#333", borderColor: C.border }}
+          icon={<PauseIcon style={{ width: 18, height: 18 }} />}
+        />
+        <Button
+          title="Recarregar estacionadas"
+          onClick={() => dispatch({ type: "LOAD_PARKED" })}
+          outlined
+          style={{ background: "#fff", color: "#333", borderColor: C.border }}
+          icon={<ArrowPathIcon style={{ width: 18, height: 18 }} />}
+        />
+      </div>
+
+      <label htmlFor="barcodeReader" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, color: "#555", fontSize: 14 }}>
+        <Checkbox id="barcodeReader" checked={barcodeReader} onChange={setBarcodeReader} />
+        Leitor de código de barras
+      </label>
+
+      <div
+        style={{
+          border: `1px solid ${C.border}`,
+          borderRadius: 8,
+          height: 260,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          background: "#fff",
+        }}
+      >
+        <div style={{ padding: 10, borderBottom: `1px solid ${C.border}`, fontWeight: 800, display: "flex", justifyContent: "space-between" }}>
+          <span>Produtos ({state.filteredProducts.length})</span>
+          <span style={{ color: C.muted, fontWeight: 600 }}>Enter adiciona o primeiro</span>
         </div>
-        <div>
-          <label htmlFor="nome" style={{ display: "block", marginBottom: 6, color: "#444", fontSize: 14 }}>
-            Nome
-          </label>
-          <Input id="nome" placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} />
+        <div style={{ flex: 1, overflowY: "auto" }}>
+          {state.isLoading ? (
+            <div style={{ padding: 16, color: C.muted }}>Carregando…</div>
+          ) : state.filteredProducts.length ? (
+            state.filteredProducts.map((p) => (
+              <div
+                key={p.id}
+                onClick={() => dispatch({ type: "ADD_TO_CART", payload: p })}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "10px 12px",
+                  borderBottom: `1px solid ${C.border}`,
+                  cursor: "pointer",
+                  background: "#fff",
+                }}
+              >
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
+                  <div style={{ fontSize: 12, color: C.muted }}>
+                    <span style={{ background: "#f3f3f3", padding: "2px 6px", borderRadius: 6, marginRight: 6 }}>{p.brand}</span>
+                    Est.: {p.stock} {p.code ? ` • ${p.code}` : ""}
+                  </div>
+                </div>
+                <div style={{ fontWeight: 800 }}>{formatCurrency(p.price)}</div>
+              </div>
+            ))
+          ) : (
+            <div style={{ padding: 16, color: C.muted, display: "flex", alignItems: "center", gap: 8 }}>
+              <PhotoIcon style={{ width: 18, height: 18 }} /> Nenhum produto encontrado.
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
-};
 
-const PagamentoStep = ({ valorTotal }) => {
-  return (
+  const ClienteStep = () => (
+    <div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 10, alignItems: "end", marginBottom: 10 }}>
+        <div>
+          <label style={{ display: "block", marginBottom: 6, color: "#444", fontSize: 14 }}>Cliente (opcional)</label>
+          <Select
+            value={state.selectedCustomerId}
+            onChange={(v) => dispatch({ type: "SET_CUSTOMER", payload: v })}
+            options={state.customers.map((c) => ({ value: c.id, label: c.name }))}
+            placeholder="Selecione um cliente"
+          />
+        </div>
+        <Button
+          title="Cadastro rápido"
+          onClick={() => dispatch({ type: "TOGGLE_QUICK_CUSTOMER" })}
+          icon={<UserPlusIcon style={{ width: 18, height: 18 }} />}
+          style={{ background: "#16a34a" }}
+        >
+          Novo
+        </Button>
+      </div>
+
+      {state.showQuickCustomer && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 10, marginBottom: 10 }}>
+          <Input
+            placeholder="Nome rápido do cliente"
+            value={state.quickCustomerName}
+            onChange={(e) => dispatch({ type: "SET_QUICK_CUSTOMER", payload: e.target.value })}
+            onKeyDown={(e) => e.key === "Enter" && handleQuickCustomerAdd()}
+          />
+          <Button onClick={handleQuickCustomerAdd} style={{ background: "#16a34a" }}>
+            Salvar
+          </Button>
+        </div>
+      )}
+
+      <label style={{ display: "flex", alignItems: "center", gap: 8, color: "#555", fontSize: 14 }}>
+        <Checkbox checked={state.printReceipt} onChange={(v) => dispatch({ type: "SET_PRINT", payload: v })} />
+        Imprimir recibo
+      </label>
+
+      <TextArea
+        rows={3}
+        placeholder="Observações na venda (opcional)"
+        value={state.notes}
+        onChange={(e) => dispatch({ type: "SET_NOTES", payload: e.target.value })}
+        style={{ marginTop: 10 }}
+      />
+    </div>
+  );
+
+  const [openCarnet, setOpenCarnet] = useState(false);
+  const PagamentoStep = () => (
     <div>
       <h5 style={{ margin: "0 0 8px", fontWeight: 800 }}>Totais</h5>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 8 }}>
         <div>
-          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Sub total</label>
-          <Input type="text" placeholder="Default" />
+          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Subtotal</label>
+          <Input type="text" value={formatCurrency(subtotal)} readOnly />
         </div>
         <div>
-          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Desconto</label>
-          <Input type="text" placeholder="Default" />
+          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Desconto (R$)</label>
+          <Input type="number" step="0.01" min="0" value={state.discountPct > 0 ? 0 : state.discountValue} onChange={(e) => dispatch({ type: "SET_DISCOUNT_VALUE", payload: e.target.value })} />
         </div>
         <div>
-          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Desconto</label>
-          <Input type="text" placeholder="Default" />
+          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Desconto (%)</label>
+          <Input type="number" step="0.1" min="0" max="100" value={state.discountPct} onChange={(e) => dispatch({ type: "SET_DISCOUNT_PCT", payload: e.target.value })} />
         </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
         <div>
-          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Recebido em dinheiro</label>
-          <Input type="text" placeholder="Default" />
+          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Acréscimo (R$)</label>
+          <Input type="number" step="0.01" min="0" value={state.surchargeValue} onChange={(e) => dispatch({ type: "SET_SURCHARGE", payload: e.target.value })} />
         </div>
         <div>
-          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Troco em dinheiro</label>
-          <Input type="text" placeholder="Default" />
+          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Total a pagar</label>
+          <Input type="text" value={formatCurrency(totalDue)} readOnly />
         </div>
         <div>
-          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Total em venda</label>
-          <Input type="text" placeholder="Default" />
+          <label style={{ fontWeight: 800, display: "block", marginBottom: 6 }}>Total pago</label>
+          <Input type="text" value={formatCurrency(totalPayments)} readOnly />
         </div>
       </div>
 
       <h5 style={{ margin: "12px 0 8px", fontWeight: 800 }}>Forma de Pagamento</h5>
 
+      {/* Ações rápidas */}
       <div style={{ display: "flex", gap: 10, justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap" }}>
-        <GenerateCarnet totalAmount={valorTotal} />
-
-
         <Button
           outlined
-          label="Dinheiro"
-          icon={<img src={real} alt="Real Icon" style={{ width: 32, height: 32 }} />}
-          style={{
-            flex: 1,
-            minWidth: 160,
-            maxWidth: 200,
-            background: "#fff",
-            borderColor: C.red,
-            color: C.red,
+          label="Dinheiro (F2)"
+          icon={<img src={real} alt="Real Icon" style={{ width: 28, height: 28 }} />}
+          onClick={() => {
+            const val = Math.max(0, totalDue - totalPayments);
+            if (!val) return toast.info("Sem restante.");
+            const pm = { id: Date.now(), method: "Dinheiro", amount: Number(val.toFixed(2)), machine: "", installments: 1 };
+            dispatch({ type: "UPDATE_PAYMENT", payload: {} });
+            dispatch({ type: "CLEAR_PAYMENTS" });
+            dispatch({ type: "ADD_PAYMENT", payload: val });
           }}
-        />
-
-
-        <Button
-          outlined
-          label="Pix - Gerar QR Code"
-          icon={<img src={pixIcon} alt="Pix Icon" style={{ width: 32, height: 32 }} />}
-          style={{
-            flex: 1,
-            minWidth: 160,
-            maxWidth: 200,
-            background: "#fff",
-            borderColor: C.red,
-            color: C.red,
-          }}
+          style={{ flex: 1, minWidth: 160, maxWidth: 200, background: "#fff", borderColor: C.red, color: C.red }}
         />
 
         <Button
           outlined
-          label="Maquininha - Dédito/Credito"
-          icon={<img src={maquininhaIcon} alt="POS" style={{ width: 44 }} />}
-          style={{
-            flex: 1,
-            minWidth: 160,
-            maxWidth: 200,
-            background: "#fff",
-            borderColor: C.red,
-            color: C.red,
+          label="PIX — Gerar QR Code"
+          icon={<img src={pixIcon} alt="Pix Icon" style={{ width: 28, height: 28 }} />}
+          onClick={() => {
+            const val = Math.max(0, totalDue - totalPayments);
+            if (!val) return toast.info("Sem restante.");
+            const pm = { id: Date.now(), method: "PIX", amount: Number(val.toFixed(2)), machine: "", installments: 1 };
+            // Apenas acrescenta
+            dispatch({ type: "UPDATE_PAYMENT", payload: {} });
+            // push manual
+            const next = [...state.payments, pm];
+            const fake = { type: "__SET_PAYMENTS__", payload: next };
+            // reducer não tem essa action; então usamos um truque: CLEAR + re-add
+            // (para manter o reducer original)
+            dispatch({ type: "CLEAR_PAYMENTS" });
+            next.forEach((p) => dispatch({ type: "ADD_PAYMENT", payload: p.amount }));
+            toast.success("PIX adicionado (simulado). Integração real do QR fica no backend.");
           }}
+          style={{ flex: 1, minWidth: 160, maxWidth: 230, background: "#fff", borderColor: C.red, color: C.red }}
         />
+
+        <Button
+          outlined
+          label="Maquininha — Débito/Crédito"
+          icon={<img src={maquininhaIcon} alt="POS" style={{ width: 40 }} />}
+          onClick={() => {
+            const val = Math.max(0, totalDue - totalPayments);
+            if (!val) return toast.info("Sem restante.");
+            const base = { id: Date.now(), amount: Number(val.toFixed(2)), machine: "", installments: 1 };
+            const pCredit = { ...base, method: "Cartão de Crédito" };
+            const pDebit = { ...base, method: "Cartão de Débito" };
+            // Apenas adiciona um método (crédito por padrão); usuário pode trocar abaixo
+            const next = [...state.payments, pCredit];
+            dispatch({ type: "CLEAR_PAYMENTS" });
+            next.forEach((p) => dispatch({ type: "ADD_PAYMENT", payload: p.amount }));
+            toast.info("Selecione a máquina e, se crédito, informe as parcelas.");
+          }}
+          style={{ flex: 1, minWidth: 180, maxWidth: 240, background: "#fff", borderColor: C.red, color: C.red }}
+        />
+
+        <Button
+          label="Ative o Pix com a Bling Conta"
+          onClick={() => toast.info("Ação de ativação do PIX é externa (Bling Conta)")}
+          style={{ backgroundColor: C.red, color: "white", flex: 1, minWidth: 220 }}
+        />
+
+        <Button outlined label="Gerar Carnê" onClick={() => setOpenCarnet(true)} />
       </div>
 
-      <Button
-        label="Ative o Pix com a Bling Conta"
-        style={{
-          backgroundColor: C.red,
-          color: "white",
-          width: "100%",
-          marginTop: 4,
-        }}
-      />
+      {/* Lista de pagamentos */}
+      <div style={{ display: "grid", gap: 10 }}>
+        {state.payments.map((p) => (
+          <div key={p.id} style={{ border: `1px solid ${C.border}`, borderRadius: 8, padding: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
+              <div>
+                <label style={{ display: "block", marginBottom: 6, fontSize: 13, color: "#555" }}>Método</label>
+                <Select
+                  value={p.method}
+                  onChange={(v) => dispatch({ type: "UPDATE_PAYMENT", payload: { id: p.id, field: "method", value: v } })}
+                  options={PAYMENT_METHODS.map((m) => ({ value: m, label: m }))}
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", marginBottom: 6, fontSize: 13, color: "#555" }}>Valor</label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={p.amount}
+                  onChange={(e) => dispatch({ type: "UPDATE_PAYMENT", payload: { id: p.id, field: "amount", value: e.target.value } })}
+                />
+              </div>
+              {(p.method === "Cartão de Crédito" || p.method === "Cartão de Débito") && (
+                <>
+                  <div>
+                    <label style={{ display: "block", marginBottom: 6, fontSize: 13, color: "#555" }}>Máquina</label>
+                    <Select
+                      value={p.machine}
+                      onChange={(v) => dispatch({ type: "UPDATE_PAYMENT", payload: { id: p.id, field: "machine", value: v } })}
+                      options={MACHINE_OPTIONS.map((m) => ({ value: m.name, label: m.name }))}
+                      placeholder="Selecione a máquina"
+                    />
+                  </div>
+                  {p.method === "Cartão de Crédito" && (
+                    <div>
+                      <label style={{ display: "block", marginBottom: 6, fontSize: 13, color: "#555" }}>Parcelas</label>
+                      <Input
+                        type="number"
+                        min="1"
+                        step="1"
+                        value={p.installments || 1}
+                        onChange={(e) => dispatch({ type: "UPDATE_PAYMENT", payload: { id: p.id, field: "installments", value: e.target.value } })}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+            <div style={{ marginTop: 8, display: "flex", justifyContent: "space-between" }}>
+              <button
+                onClick={() =>
+                  dispatch({
+                    type: "UPDATE_PAYMENT",
+                    payload: { id: p.id, field: "amount", value: Math.max(0, totalDue - totalPayments + p.amount) },
+                  })
+                }
+                style={{ fontSize: 12, color: "#555" }}
+              >
+                Usar restante
+              </button>
+              <button onClick={() => dispatch({ type: "REMOVE_PAYMENT", payload: p.id })} style={{ color: C.red, fontWeight: 700 }}>
+                Remover
+              </button>
+            </div>
+          </div>
+        ))}
+
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <small style={{ color: "#666" }}>Dica: F2 adiciona o restante automaticamente.</small>
+          <div style={{ display: "flex", gap: 8 }}>
+            <Button outlined title="Limpar pagamentos" onClick={() => dispatch({ type: "CLEAR_PAYMENTS" })} icon={<XMarkIcon style={{ width: 18, height: 18 }} />} />
+            <Button title="Adicionar método (restante)" onClick={() => dispatch({ type: "ADD_PAYMENT", payload: Math.max(0, totalDue - totalPayments) })}>
+              Adicionar Método
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Carnê */}
+      <Modal
+        open={openCarnet}
+        onClose={() => setOpenCarnet(false)}
+        title="Confirme os Dados do Carnê"
+        footer={
+          <>
+            <Button outlined label="Cancelar" onClick={() => setOpenCarnet(false)} style={{ borderColor: C.border, color: "#555" }} />
+            <Button
+              label="Confirmar e Baixar"
+              onClick={async () => {
+                await downloadCarnet();
+                setOpenCarnet(false);
+              }}
+            />
+          </>
+        }
+      >
+        <h5 style={{ marginTop: 0, marginBottom: 8, fontWeight: 800 }}>Resumo do Carnê</h5>
+        <ul style={{ marginLeft: 18, lineHeight: 1.6 }}>
+          <li>Total: {formatCurrency(totalDue)}</li>
+        </ul>
+      </Modal>
     </div>
   );
-};
-
-/* ==================================== PDV ==================================== */
-const PDV = () => {
-  const [priceList, setPriceList] = useState(null);
-  const [barcodeReader, setBarcodeReader] = useState(false);
-  const [currentStep, setCurrentStep] = useState("produto");
-  const priceListOptions = [{ name: "Nenhuma lista", code: "none" }];
-  const navigate = useNavigate();
-
-  // mock
-  const [produtos] = useState([]);
-
-  const redirectToDashboard = () => navigate("/");
-
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") redirectToDashboard();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      if (document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(() => { });
-      }
-    };
-  }, []);
 
   const renderStepContent = () => {
     switch (currentStep) {
       case "produto":
-        return (
-          <ProdutoStep
-            priceList={priceList}
-            setPriceList={setPriceList}
-            priceListOptions={priceListOptions}
-            barcodeReader={barcodeReader}
-            setBarcodeReader={setBarcodeReader}
-          />
-        );
+        return <ProdutoStep />;
       case "cliente":
         return <ClienteStep />;
       case "pagamento":
@@ -6009,16 +6591,9 @@ const PDV = () => {
     }
   };
 
+  /* ============================== UI principal ============================= */
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        overflow: "hidden",
-        background: C.bgApp,
-      }}
-    >
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden", background: C.bgApp }}>
       {/* Header */}
       <div
         style={{
@@ -6031,39 +6606,25 @@ const PDV = () => {
           boxShadow: "0 2px 4px rgba(0,0,0,.12)",
         }}
       >
-        <h2 style={{ margin: 0, fontWeight: 800, letterSpacing: ".2px" }}>Venda-PRO</h2>
+        <img src={logo} alt="Venda-PRO" style={{ height: 50, width: 150, display: "block" }} />
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ position: "relative", width: 320, maxWidth: "48vw" }}>
-            <Search
-              size={16}
-              style={{
-                position: "absolute",
-                right: 36,
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "#666",
-              }}
+            <MagnifyingGlassIcon
+              style={{ position: "absolute", right: 36, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, color: "#666" }}
             />
             <Input
-              placeholder="Buscar venda - (Alt+P)"
-              style={{
-                paddingRight: 44,
-                background: "#fff",
-                borderColor: "#efefef",
-                fontWeight: 600,
-              }}
+              placeholder="Buscar venda — (Alt+P)"
+              style={{ paddingRight: 44, background: "#fff", borderColor: "#efefef", fontWeight: 600 }}
+              onFocus={() => setCurrentStep("produto")}
             />
           </div>
 
-          {/* Botão home (branco com borda vermelha) */}
           <Button
             outlined
             title="Voltar ao Dashboard"
-            icon={
- <Home size={170} color="#EA1D2C" />
-            }
-            onClick={redirectToDashboard}
+            icon={<HomeIcon style={{ width: 18, height: 18, color: C.red }} />}
+            onClick={() => navigate("/")}
             style={{
               background: "#fff",
               color: C.red,
@@ -6098,7 +6659,7 @@ const PDV = () => {
           {renderStepContent()}
         </div>
 
-        {/* Coluna direita */}
+        {/* Coluna direita — Carrinho */}
         <div
           style={{
             flexBasis: "57%",
@@ -6107,28 +6668,67 @@ const PDV = () => {
             borderRadius: 10,
             border: `1px solid ${C.border}`,
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            flexDirection: "column",
             position: "relative",
+            overflow: "hidden",
           }}
         >
-          {produtos.length === 0 ? (
-            <>
-              <div
-                style={{
-                  position: "absolute",
-                  top: 18,
-                  color: C.red,
-                  fontWeight: 800,
-                }}
-              >
-                Nenhum produto registrado
+          <div style={{ padding: 12, borderBottom: `1px solid ${C.border}`, fontWeight: 800 }}>Checkout</div>
+
+          <div style={{ flex: 1, overflowY: "auto", padding: 10 }}>
+            {state.cart.length === 0 ? (
+              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", color: "#888" }}>
+                <div style={{ color: C.red, fontWeight: 800, marginBottom: 8 }}>Nenhum produto no carrinho</div>
+                <ShoppingCartIcon style={{ width: 120, height: 120, color: "#c9c9c9" }} />
               </div>
-              <ShoppingCart size={170} color="#c9c9c9" />
-            </>
-          ) : (
-            <div> {/* sua lista de produtos aqui */}</div>
-          )}
+            ) : (
+              <div style={{ display: "grid", gap: 10 }}>
+                {state.cart.map((it) => (
+                  <div key={it.id} style={{ border: `1px solid ${C.border}`, borderRadius: 10, padding: 10, background: "#fff" }}>
+                    <div style={{ fontWeight: 700 }}>{it.name}</div>
+                    <div style={{ fontSize: 12, color: C.muted }}>{it.brand} • {formatCurrency(it.price)} • estoque {it.stock}</div>
+                    <div style={{ marginTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div style={{ display: "inline-flex", alignItems: "center", border: `1px solid ${C.border}`, borderRadius: 8 }}>
+                        <button onClick={() => dispatch({ type: "UPDATE_QTY", payload: { id: it.id, qty: it.quantity - 1 } })} style={{ padding: "6px 10px", background: "#fafafa", borderRight: `1px solid ${C.border}` }}>
+                          <MinusIcon style={{ width: 14, height: 14 }} />
+                        </button>
+                        <Input
+                          type="number"
+                          min="1"
+                          value={it.quantity}
+                          onChange={(e) => dispatch({ type: "UPDATE_QTY", payload: { id: it.id, qty: Number(e.target.value) || 1 } })}
+                          style={{ width: 56, textAlign: "center", border: "none" }}
+                        />
+                        <button onClick={() => dispatch({ type: "UPDATE_QTY", payload: { id: it.id, qty: it.quantity + 1 } })} style={{ padding: "6px 10px", background: "#fafafa", borderLeft: `1px solid ${C.border}` }}>
+                          <PlusIcon style={{ width: 14, height: 14 }} />
+                        </button>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontWeight: 800 }}>{formatCurrency(it.total)}</span>
+                        <button onClick={() => dispatch({ type: "REMOVE_FROM_CART", payload: it.id })} title="Remover" style={{ color: C.red }}>
+                          <TrashIcon style={{ width: 18, height: 18 }} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Resumo à direita */}
+          <div style={{ padding: 12, background: "#fff", borderTop: `1px solid ${C.border}` }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", rowGap: 6, fontSize: 14 }}>
+              <div>Subtotal</div><div style={{ fontWeight: 600 }}>{formatCurrency(subtotal)}</div>
+              <div>Desconto</div><div>- {formatCurrency(discount)}</div>
+              <div>Acréscimo</div><div>+ {formatCurrency(surcharge)}</div>
+              <div style={{ gridColumn: "1 / span 2", borderTop: `1px dashed ${C.border}`, marginTop: 6 }} />
+              <div style={{ fontWeight: 800 }}>Total a pagar</div>
+              <div style={{ fontWeight: 900 }}>{formatCurrency(totalDue)}</div>
+              <div>Total pago</div><div style={{ fontWeight: 600 }}>{formatCurrency(totalPayments)}</div>
+              {change > 0 && (<><div>Troco</div><div style={{ fontWeight: 800 }}>{formatCurrency(change)}</div></>)}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -6153,33 +6753,56 @@ const PDV = () => {
           outlined
           danger
           label="Excluir venda (Alt+Q)"
-          style={{
-            background: "#fff",
-            color: C.red,
-            borderColor: "#ffccd2",
-            paddingLeft: 16,
-            paddingRight: 16,
-          }}
+          onClick={() => dispatch({ type: "RESET_ALL" })}
+          style={{ background: "#fff", color: C.red, borderColor: "#ffccd2", paddingLeft: 16, paddingRight: 16 }}
         />
 
         <Button
-          label="Finalizar venda (Alt+S)"
-          style={{
-            background: C.red,
-            margin: "0 auto",
-            borderRadius: 8,
-            paddingLeft: 18,
-            paddingRight: 18,
-          }}
+          label="Finalizar venda (F3)"
+          onClick={handleFinalize}
+          disabled={state.cart.length === 0 || totalPayments + 0.001 < totalDue}
+          style={{ background: C.red, margin: "0 auto", borderRadius: 8, paddingLeft: 18, paddingRight: 18 }}
+          icon={<PrinterIcon style={{ width: 18, height: 18 }} />}
         />
 
         <div style={{ display: "flex", alignItems: "baseline", gap: 10, color: "#333" }}>
           <div style={{ fontSize: 18, fontWeight: 600 }}>Total</div>
-          <div style={{ fontSize: 44, fontWeight: 900, letterSpacing: ".5px" }}>R$ 0,00</div>
+          <div style={{ fontSize: 44, fontWeight: 900, letterSpacing: ".5px" }}>{formatCurrency(totalDue)}</div>
         </div>
       </div>
+
+      {/* VENDAS ESTACIONADAS */}
+      {state.parked.length > 0 && (
+        <div style={{ position: "fixed", right: 8, bottom: 98, width: 360, maxHeight: 320, overflow: "auto", background: "#fff", border: `1px solid ${C.border}`, borderRadius: 10 }}>
+          <div style={{ padding: 10, borderBottom: `1px solid ${C.border}`, fontWeight: 800, display: "flex", justifyContent: "space-between" }}>
+            <span>Vendas Estacionadas</span>
+            <span style={{ color: C.muted, fontSize: 12 }}>{state.parked.length}</span>
+          </div>
+          <div style={{ padding: 10, display: "grid", gap: 8 }}>
+            {state.parked.map((p) => (
+              <div key={p.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", border: `1px solid ${C.border}`, borderRadius: 8, padding: 8 }}>
+                <div style={{ fontSize: 12 }}>
+                  <div style={{ fontWeight: 700 }}>#{p.id}</div>
+                  <div style={{ color: C.muted }}>{new Date(p.createdAt).toLocaleString("pt-BR")}{" • "}{p.snapshot.cart.length} itens</div>
+                </div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <Button
+                    onClick={() => {
+                      dispatch({ type: "RESUME_PARKED", payload: p.id });
+                      toast.info("Venda retomada no checkout.");
+                    }}
+                    style={{ background: "#2563eb" }}
+                    icon={<PlayIcon style={{ width: 16, height: 16 }} />}
+                  >
+                    Retomar
+                  </Button>
+                  <Button outlined onClick={() => dispatch({ type: "DELETE_PARKED", payload: p.id })}>Excluir</Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
-};
-
-export default React.memo(PDV);
+}

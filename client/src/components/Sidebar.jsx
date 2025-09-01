@@ -313,6 +313,8 @@ import {
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 
+import logo from "../assets/img/logo.png";
+
 const cx = (...c) => c.filter(Boolean).join(" ");
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
@@ -426,13 +428,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       >
         {/* Header minimalista */}
         <div className="flex h-16 items-center gap-3 px-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 text-white font-semibold shadow-sm">
-            FG
-          </div>
+
           {isOpen && (
             <div className="mr-auto leading-tight">
-              <div className="text-[15px] font-semibold text-gray-900 tracking-tight">FgFilms</div>
-              <div className="text-[11px] font-medium text-gray-400">Painel</div>
+              <img
+                src={logo}
+                alt="Venda-PRO"
+                style={{ height: 70, width: 140, display: "block" }}
+              />
+            
             </div>
           )}
 
