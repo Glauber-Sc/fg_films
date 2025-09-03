@@ -91,6 +91,8 @@ import Quotes from "./pages/Quotes"
 import AddQuote from "./pages/AddQuote"
 import ViewQuote from "./pages/ViewQuote"
 import Expenses from "./pages/Expenses"
+import AddExpense from "./pages/AddExpense";
+import EditExpense from "./pages/EditExpense";
 
 function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
@@ -123,6 +125,8 @@ function Layout() {
             <Route path="/quotes/add" element={<AddQuote />} />
             <Route path="/quotes/view/:id" element={<ViewQuote />} />
             <Route path="/expenses" element={<Expenses />} />
+            <Route path="/expenses/add" element={<AddExpense />} />
+            <Route path="/expenses/edit/:id" element={<EditExpense />} />
           </Routes>
         </div>
       </div>

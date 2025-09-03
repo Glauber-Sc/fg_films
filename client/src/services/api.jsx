@@ -207,6 +207,7 @@ export const fetchReports = async (params = {}) => {
 
 // ---------- Expenses ----------
 export const fetchExpenses = async () => (await api.get("/expenses")).data;
+export const fetchExpenseById = async (id) => (await api.get(`/expenses/${id}`)).data;
 export const createExpense = async (data) => (await api.post("/expenses", data)).data;
 export const updateExpense = async (id, data) => (await api.put(`/expenses/${id}`, data)).data;
 export const deleteExpense = async (id) => (await api.delete(`/expenses/${id}`)).data;
@@ -214,3 +215,4 @@ export const deleteExpense = async (id) => (await api.delete(`/expenses/${id}`))
 /* ---- ALIAS de compatibilidade (se alguém ainda usa /dispesas no front antigo) ---- */
 export async function fetchDispesas() { return fetchExpenses(); }
 export async function addDispesa(dispesa) { return createExpense(dispesa); }
+

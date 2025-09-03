@@ -1,18 +1,19 @@
 import { useMemo, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Bars3Icon,
-  XMarkIcon,
-  HomeIcon,
-  CubeIcon,
-  ShoppingCartIcon,
-  ClipboardDocumentListIcon,
-  ChartBarIcon,
-  ShoppingBagIcon,
-  UsersIcon,
-  BuildingOfficeIcon,
-  DocumentTextIcon,
-} from "@heroicons/react/24/outline";
+  Home,
+  Box,
+  ShoppingCart,
+  ClipboardList,
+  BarChart,
+  ShoppingBag,
+  Users,
+  Building,
+  FileText,
+  ChevronLeft,
+  ChevronRight,
+  LogOut
+} from "lucide-react";
 
 import logo from "../assets/img/logo.png";
 
@@ -30,37 +31,37 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     () => [
       {
         title: "Início",
-        items: [{ name: "Dashboard", path: "/", icon: HomeIcon }],
+        items: [{ name: "Dashboard", path: "/", icon: Home }],
       },
       {
         title: "Operação",
         items: [
-          { name: "PDV", path: "/pdv", icon: ShoppingBagIcon },
-          { name: "Vendas", path: "/sales", icon: ShoppingCartIcon },
-          { name: "Orçamentos", path: "/quotes", icon: DocumentTextIcon },
+          { name: "PDV", path: "/pdv", icon: ShoppingBag },
+          { name: "Vendas", path: "/sales", icon: ShoppingCart },
+          { name: "Orçamentos", path: "/quotes", icon: FileText },
         ],
       },
       {
         title: "Catálogo",
         items: [
-          { name: "Produtos", path: "/products", icon: CubeIcon },
-          { name: "Estoque", path: "/inventory", icon: ClipboardDocumentListIcon },
-          { name: "Fornecedores", path: "/suppliers", icon: BuildingOfficeIcon },
-          { name: "Clientes", path: "/customers", icon: UsersIcon },
+          { name: "Produtos", path: "/products", icon: Box },
+          { name: "Estoque", path: "/inventory", icon: ClipboardList },
+          { name: "Fornecedores", path: "/suppliers", icon: Building },
+          { name: "Clientes", path: "/customers", icon: Users },
         ],
       },
       {
         title: "Gestão",
         items: [
-          { name: "Despesas", path: "/expenses", icon: DocumentTextIcon },
-          { name: "Relatórios", path: "/reports", icon: ChartBarIcon },
+          { name: "Despesas", path: "/expenses", icon: FileText },
+          { name: "Relatórios", path: "/reports", icon: BarChart },
         ],
       },
     ],
     []
   );
 
-  // A11y: navegar por teclado dentro do menu
+  // A11y: navegação por teclado
   const linkRefs = useRef([]);
   const onKeyDown = (e) => {
     const list = linkRefs.current.filter(Boolean);
@@ -95,11 +96,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     />
   );
 
-  // 👉 Fullscreen ao clicar no PDV
+  // Fullscreen ao clicar no PDV (opcional)
   const handleItemClick = (path) => async () => {
     if (path === "/pdv") {
       try {
-        const el = document.documentElement; // ou document.getElementById("root")
+        const el = document.documentElement;
         if (!document.fullscreenElement && el?.requestFullscreen) {
           await el.requestFullscreen();
         }
@@ -112,6 +113,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     }
   };
 
+  // Handler de logout (substitua pela sua lógica)
+  const handleLogout = () => {
+    // TODO: implemente seu logout aqui
+    console.log("logout");
+  };
+
   return (
     <>
       <MobileOverlay />
@@ -122,12 +129,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           "bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90",
           "ring-1 ring-black/5 shadow-sm",
           "transition-[width] duration-300",
-          isOpen ? "w-64" : "w-20"
+          isOpen ? "w-60" : "w-20",
+          // layout em coluna para rodapé colado embaixo
+          "flex flex-col"
         )}
         aria-label="Navegação principal"
         data-open={isOpen ? "true" : "false"}
       >
-        {/* Header minimalista */}
+        {/* Header */}
         {isOpen && (
           <div className="mt-2 px-3">
             <img
@@ -138,11 +147,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </div>
         )}
 
-        {/* Navegação */}
+        {/* Navegação (ocupa o meio) */}
         <nav
           role="navigation"
           aria-label="Seções"
           onKeyDown={onKeyDown}
+          className="flex-1 overflow-y-auto"
         >
           {sections.map((section, sIdx) => (
             <div key={section.title} className="px-2">
@@ -162,11 +172,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
                   return (
                     <li key={item.name} className="relative">
-
                       <Link
                         ref={(el) => (linkRefs.current[flatIdx] = el)}
                         to={item.path}
-                        onClick={handleItemClick(item.path)}  // << fullscreen no PDV
+                        onClick={handleItemClick(item.path)}
                         title={item.name}
                         aria-current={active ? "page" : undefined}
                         className={cx(
@@ -190,13 +199,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                           {item.name}
                         </span>
 
+                        {/* Tooltip: não gera largura => some o scroll horizontal */}
                         {!isOpen && (
                           <span
                             className={cx(
-                              "pointer-events-none absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2",
+                              "pointer-events-none absolute left-full ml-2 top-1/2 -translate-y-1/2",
                               "whitespace-nowrap rounded-md bg-gray-900 px-2 py-1 text-xs text-white shadow-lg",
-                              "opacity-0 translate-x-1 transition-all duration-150",
-                              "group-hover:opacity-100 group-hover:translate-x-0"
+                              "hidden group-hover:block group-focus-visible:block"
                             )}
                           >
                             {item.name}
@@ -211,18 +220,32 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               <div className="my-2 border-t border-gray-100" />
             </div>
           ))}
-         <div className="flex">
-  <button
-    onClick={toggleSidebar}
-    aria-label="Alternar menu"
-    aria-expanded={isOpen}
-    className="ml-auto rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
-  >
-    {isOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
-  </button>
-</div>
-
         </nav>
+
+        {/* Rodapé fixo: Sair (esquerda) + X/Menu (direita) */}
+        <div className="mt-auto border-t border-gray-100 p-2">
+          <div className={cx("flex items-center", isOpen ? "justify-between" : "justify-end")}>
+            {isOpen && (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 focus-visible:ring-2 focus-visible:ring-gray-900/10"
+              >
+                <LogOut className="h-4 w-4" aria-hidden="true" />
+                <span>Sair</span>
+              </button>
+            )}
+
+            <button
+              onClick={toggleSidebar}
+              aria-label="Alternar menu"
+              aria-expanded={isOpen}
+              className="rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
+            >
+              {isOpen ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
+            </button>
+          </div>
+        </div>
       </aside>
     </>
   );

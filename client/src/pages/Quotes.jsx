@@ -683,7 +683,7 @@ const Quotes = () => {
 
           <Link
             to="/quotes/add"
-            className="inline-flex items-center gap-2 rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-black/30"
+            className="inline-flex items-center gap-2 rounded-md btn-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
             <PlusIcon className="h-5 w-5" /> Novo Orçamento
           </Link>

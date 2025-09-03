@@ -226,7 +226,7 @@ const CustomerForm = ({ initialData = {}, onSubmit, onCancel, buttonText = "Salv
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg.black disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center rounded-md btn-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg.primary disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting ? "Salvando..." : buttonText}
         </button>
