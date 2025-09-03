@@ -1,1044 +1,176 @@
 [
   {
-    "id": "dxf02e9mb",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Glauber",
-    "paymentMethods": [
-      {
-        "method": "Cartão de Crédito",
-        "amount": 150,
-        "machine": "Máquina A",
-        "id": 1756471816086
-      },
-      {
-        "method": "Cartão de Crédito",
-        "amount": 149.9,
-        "machine": "Máquina B",
-        "id": 1756471837179
-      }
-    ],
-    "date": "2025-08-29T12:50:45.961Z",
-    "quoteId": null
-  },
-  {
-    "id": "wftr2rz0a",
+    "id": "0ox85os2k",
     "productId": "1",
     "productName": "Central Multimídia Android 10\"",
     "quantity": 1,
     "unitPrice": 1999.9,
     "total": 1999.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
+    "customerId": "ozf7wgr96",
+    "customerName": "Glauber Santiago",
     "paymentMethods": [
       {
         "method": "PIX",
-        "amount": 1999.9,
+        "amount": 500,
         "machine": null,
-        "id": 1756487288048
+        "id": 1756927009473
+      },
+      {
+        "method": "Cartão de Crédito",
+        "amount": 1499.9,
+        "machine": "Máquina A",
+        "id": 1756927019081
       }
     ],
-    "date": "2025-08-28T17:08:12.095Z",
+    "date": "2025-09-03T19:17:11.208Z",
     "quoteId": null
   },
   {
-    "id": "v4e6etwnb",
-    "productId": "1",
-    "productName": "Central Multimídia Android 10\"",
+    "id": "1babtkfr8",
+    "productId": "4",
+    "productName": "Módulo de Subida de Vidro Elétrico",
     "quantity": 1,
-    "unitPrice": 1999.9,
-    "total": 1999.9,
+    "unitPrice": 199.9,
+    "total": 199.9,
     "customerId": "1",
     "customerName": "João Silva",
     "paymentMethods": [
       {
-        "method": "Dinheiro",
-        "amount": 2999.6,
+        "method": "PIX",
+        "amount": 199.9,
         "machine": null,
-        "id": 1756690202574
+        "id": 1756927066409
       }
     ],
-    "date": "2025-09-01T01:30:07.369Z",
+    "date": "2025-09-03T19:17:47.568Z",
     "quoteId": null
   },
   {
-    "id": "kktjsgag",
+    "id": "lgpisxgqp",
     "productId": "2",
     "productName": "Alarme Automotivo com Controle Presencial",
     "quantity": 1,
     "unitPrice": 499.9,
     "total": 499.9,
-    "customerId": "1",
-    "customerName": "João Silva",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 2999.6,
-        "machine": null,
-        "id": 1756690202574
-      }
-    ],
-    "date": "2025-09-01T01:30:07.369Z",
-    "quoteId": null
-  },
-  {
-    "id": "k7c348q6h",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": "1",
-    "customerName": "João Silva",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 2999.6,
-        "machine": null,
-        "id": 1756690202574
-      }
-    ],
-    "date": "2025-09-01T01:30:07.369Z",
-    "quoteId": null
-  },
-  {
-    "id": "9wmzdohx3",
-    "productId": "4",
-    "productName": "Módulo de Subida de Vidro Elétrico",
-    "quantity": 1,
-    "unitPrice": 199.9,
-    "total": 199.9,
-    "customerId": "1",
-    "customerName": "João Silva",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 2999.6,
-        "machine": null,
-        "id": 1756690202574
-      }
-    ],
-    "date": "2025-09-01T01:30:07.369Z",
-    "quoteId": null
-  },
-  {
-    "id": "gzltivlgm",
-    "productId": "4",
-    "productName": "Módulo de Subida de Vidro Elétrico",
-    "quantity": 1,
-    "unitPrice": 199.9,
-    "total": 199.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 199.9,
-        "machine": null,
-        "id": 1756741847269
-      }
-    ],
-    "date": "2025-09-01T15:50:49.116Z",
-    "quoteId": null
-  },
-  {
-    "id": "c3klp1iih",
-    "productId": "1",
-    "productName": "Central Multimídia Android 10\"",
-    "quantity": 1,
-    "unitPrice": 1999.9,
-    "total": 1999.9,
     "customerId": "n1vrfl7cy",
     "customerName": "Daniel",
     "paymentMethods": [
       {
         "method": "Cartão de Crédito",
-        "amount": 1,
-        "machine": "Máquina B",
-        "id": 1756744109992
+        "amount": 500,
+        "machine": "Máquina A",
+        "id": 1756927112537
       },
       {
         "method": "Cartão de Crédito",
-        "amount": 1,
-        "machine": "Máquina A",
-        "id": 1756744114201
+        "amount": 400,
+        "machine": "Máquina B",
+        "id": 1756927125513
       },
       {
         "method": "PIX",
-        "amount": 1997.9,
+        "amount": 159.6,
         "machine": null,
-        "id": 1756744593394
+        "id": 1756927142425
       }
     ],
-    "date": "2025-09-01T16:37:39.486Z",
+    "date": "2025-09-03T19:19:07.997Z",
     "quoteId": null
   },
   {
-    "id": "0qm2btv1u",
+    "id": "e7kbaug7y",
     "productId": "3",
     "productName": "Kit Trava Elétrica 4 Portas",
     "quantity": 1,
     "unitPrice": 299.9,
     "total": 299.9,
-    "customerId": "ozf7wgr96",
-    "customerName": "Glauber Santiago",
+    "customerId": "n1vrfl7cy",
+    "customerName": "Daniel",
     "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 100,
-        "machine": null,
-        "id": 1756853027114
-      },
-      {
-        "method": "Cartão de Crédito",
-        "amount": 149.9,
-        "machine": "Máquina A",
-        "id": 1756853039061
-      }
-    ],
-    "date": "2025-09-02T22:44:36.834Z",
-    "quoteId": null
-  },
-  {
-    "id": "k0vgqq594",
-    "productId": "20",
-    "productName": "Controle Remoto para Som Automotivo",
-    "quantity": 1,
-    "unitPrice": 79.9,
-    "total": 79.9,
-    "customerId": "ozf7wgr96",
-    "customerName": "Glauber Santiago",
-    "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 75.9,
-        "machine": null,
-        "id": 1756873704367
-      }
-    ],
-    "date": "2025-09-03T04:28:46.338Z",
-    "quoteId": null
-  },
-  {
-    "id": "udki2nk1e",
-    "productId": "6",
-    "productName": "Câmera de Ré com Visão Noturna",
-    "quantity": 1,
-    "unitPrice": 149.9,
-    "total": 149.9,
-    "customerId": "ozf7wgr96",
-    "customerName": "Glauber Santiago",
-    "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 149.9,
-        "machine": null,
-        "id": 1756876698055
-      }
-    ],
-    "date": "2025-09-03T05:18:24.030Z",
-    "quoteId": null
-  },
-  {
-    "id": "v3u6l3zpj",
-    "productId": "4",
-    "productName": "Módulo de Subida de Vidro Elétrico",
-    "quantity": 1,
-    "unitPrice": 199.9,
-    "total": 199.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 199.9,
-        "machine": null,
-        "id": 1756877097627
-      }
-    ],
-    "date": "2025-09-03T05:24:59.565Z",
-    "quoteId": null
-  },
-  {
-    "id": "2u8zg3inp",
-    "productId": "1",
-    "productName": "Central Multimídia Android 10\"",
-    "quantity": 1,
-    "unitPrice": 1999.9,
-    "total": 1999.9,
-    "customerId": "ozf7wgr96",
-    "customerName": "Glauber Santiago",
-    "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 1000,
-        "machine": null,
-        "id": 1756902584874
-      },
-      {
-        "method": "Cartão de Crédito",
-        "amount": 5000,
-        "machine": "Máquina A",
-        "id": 1756902589065
-      }
-    ],
-    "date": "2025-09-03T12:30:01.047Z",
-    "quoteId": null
-  },
-  {
-    "id": "0j04nof2t",
-    "productId": "1",
-    "productName": "Central Multimídia Android 10\"",
-    "quantity": 1,
-    "unitPrice": 1999.9,
-    "total": 1999.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 1000,
-        "machine": null,
-        "id": 1756903263159
-      },
       {
         "method": "Cartão de Crédito",
         "amount": 500,
         "machine": "Máquina A",
-        "id": 1756903267342
+        "id": 1756927112537
       },
       {
         "method": "Cartão de Crédito",
-        "amount": 499.9,
+        "amount": 400,
         "machine": "Máquina B",
-        "id": 1756903275030
-      }
-    ],
-    "date": "2025-09-03T12:41:26.590Z",
-    "quoteId": null
-  },
-  {
-    "id": "09pl2r646",
-    "productId": "1",
-    "productName": "Central Multimídia Android 10\"",
-    "quantity": 1,
-    "unitPrice": 1999.9,
-    "total": 1999.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
+        "id": 1756927125513
+      },
       {
         "method": "PIX",
-        "amount": 1999.9,
+        "amount": 159.6,
         "machine": null,
-        "id": 1756904388822
+        "id": 1756927142425
       }
     ],
-    "date": "2025-09-03T12:59:51.565Z",
+    "date": "2025-09-03T19:19:07.997Z",
     "quoteId": null
   },
   {
-    "id": "2g6ofs8ed",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756905385230
-      }
-    ],
-    "date": "2025-09-03T13:16:26.157Z",
-    "quoteId": null
-  },
-  {
-    "id": "8mmca8xld",
-    "productId": "1",
-    "productName": "Central Multimídia Android 10\"",
-    "quantity": 1,
-    "unitPrice": 1999.9,
-    "total": 1999.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 1999.9,
-        "machine": null,
-        "id": 1756905504933
-      }
-    ],
-    "date": "2025-09-03T13:18:25.861Z",
-    "quoteId": null
-  },
-  {
-    "id": "l07mps3qz",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756905904326
-      }
-    ],
-    "date": "2025-09-03T13:25:05.901Z",
-    "quoteId": null
-  },
-  {
-    "id": "vxv75n0tm",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756906176613
-      }
-    ],
-    "date": "2025-09-03T13:29:37.413Z",
-    "quoteId": null
-  },
-  {
-    "id": "xbrpb5w8q",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756906268310
-      }
-    ],
-    "date": "2025-09-03T13:31:09.157Z",
-    "quoteId": null
-  },
-  {
-    "id": "gfiiih0d9",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756906354232
-      }
-    ],
-    "date": "2025-09-03T13:32:34.677Z",
-    "quoteId": null
-  },
-  {
-    "id": "4sxdog5qb",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "PIX",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756908016246
-      }
-    ],
-    "date": "2025-09-03T14:00:17.180Z",
-    "quoteId": null
-  },
-  {
-    "id": "s4nvv0zq6",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756908911644
-      }
-    ],
-    "date": "2025-09-03T14:15:12.260Z",
-    "quoteId": null
-  },
-  {
-    "id": "5ogd1fl48",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756909680717
-      }
-    ],
-    "date": "2025-09-03T14:28:01.339Z",
-    "quoteId": null
-  },
-  {
-    "id": "z2r2fxprj",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756909946507
-      }
-    ],
-    "date": "2025-09-03T14:32:27.675Z",
-    "quoteId": null
-  },
-  {
-    "id": "j3qb8kg3j",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756910155236
-      }
-    ],
-    "date": "2025-09-03T14:35:55.723Z",
-    "quoteId": null
-  },
-  {
-    "id": "sxfduaw9n",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756910322331
-      }
-    ],
-    "date": "2025-09-03T14:38:43.315Z",
-    "quoteId": null
-  },
-  {
-    "id": "f9rz3wbam",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756910398404
-      }
-    ],
-    "date": "2025-09-03T14:40:00.395Z",
-    "quoteId": null
-  },
-  {
-    "id": "mrzz7t2jv",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756910417907
-      }
-    ],
-    "date": "2025-09-03T14:40:18.627Z",
-    "quoteId": null
-  },
-  {
-    "id": "aitsysp8i",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756910528211
-      }
-    ],
-    "date": "2025-09-03T14:42:08.915Z",
-    "quoteId": null
-  },
-  {
-    "id": "smv8u0nj2",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756910894011
-      }
-    ],
-    "date": "2025-09-03T14:48:16.075Z",
-    "quoteId": null
-  },
-  {
-    "id": "jkrrk2xb2",
-    "productId": "2",
-    "productName": "Alarme Automotivo com Controle Presencial",
-    "quantity": 1,
-    "unitPrice": 499.9,
-    "total": 499.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 499.9,
-        "machine": null,
-        "id": 1756910942683
-      }
-    ],
-    "date": "2025-09-03T14:49:03.658Z",
-    "quoteId": null
-  },
-  {
-    "id": "ppyumjvu1",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756911028164
-      }
-    ],
-    "date": "2025-09-03T14:50:29.491Z",
-    "quoteId": null
-  },
-  {
-    "id": "djhqcequ4",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756911369930
-      }
-    ],
-    "date": "2025-09-03T14:56:11.018Z",
-    "quoteId": null
-  },
-  {
-    "id": "ecdu8119z",
+    "id": "8pldc7caj",
     "productId": "4",
     "productName": "Módulo de Subida de Vidro Elétrico",
     "quantity": 1,
     "unitPrice": 199.9,
     "total": 199.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
+    "customerId": "n1vrfl7cy",
+    "customerName": "Daniel",
     "paymentMethods": [
       {
-        "method": "Dinheiro",
-        "amount": 199.9,
+        "method": "Cartão de Crédito",
+        "amount": 500,
+        "machine": "Máquina A",
+        "id": 1756927112537
+      },
+      {
+        "method": "Cartão de Crédito",
+        "amount": 400,
+        "machine": "Máquina B",
+        "id": 1756927125513
+      },
+      {
+        "method": "PIX",
+        "amount": 159.6,
         "machine": null,
-        "id": 1756911474635
+        "id": 1756927142425
       }
     ],
-    "date": "2025-09-03T14:57:55.074Z",
+    "date": "2025-09-03T19:19:07.997Z",
     "quoteId": null
   },
   {
-    "id": "q3eva9muo",
-    "productId": "4",
-    "productName": "Módulo de Subida de Vidro Elétrico",
-    "quantity": 1,
-    "unitPrice": 199.9,
-    "total": 199.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 199.9,
-        "machine": null,
-        "id": 1756911623251
-      }
-    ],
-    "date": "2025-09-03T15:00:24.002Z",
-    "quoteId": null
-  },
-  {
-    "id": "vml0iq0kx",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756911644523
-      }
-    ],
-    "date": "2025-09-03T15:00:45.522Z",
-    "quoteId": null
-  },
-  {
-    "id": "uducxc8xj",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756911664619
-      }
-    ],
-    "date": "2025-09-03T15:01:05.554Z",
-    "quoteId": null
-  },
-  {
-    "id": "7m7913lp9",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756911769059
-      }
-    ],
-    "date": "2025-09-03T15:02:51.770Z",
-    "quoteId": null
-  },
-  {
-    "id": "6s3savci5",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756911822267
-      }
-    ],
-    "date": "2025-09-03T15:03:42.842Z",
-    "quoteId": null
-  },
-  {
-    "id": "t8z6gqwa8",
+    "id": "b501z25zf",
     "productId": "5",
     "productName": "Lâmpada LED Super Branca H7",
     "quantity": 1,
     "unitPrice": 59.9,
     "total": 59.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
+    "customerId": "n1vrfl7cy",
+    "customerName": "Daniel",
     "paymentMethods": [
       {
-        "method": "Dinheiro",
-        "amount": 59.9,
-        "machine": null,
-        "id": 1756911834514
-      }
-    ],
-    "date": "2025-09-03T15:03:55.186Z",
-    "quoteId": null
-  },
-  {
-    "id": "jhokikucj",
-    "productId": "6",
-    "productName": "Câmera de Ré com Visão Noturna",
-    "quantity": 1,
-    "unitPrice": 149.9,
-    "total": 149.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
+        "method": "Cartão de Crédito",
+        "amount": 500,
+        "machine": "Máquina A",
+        "id": 1756927112537
+      },
       {
-        "method": "Dinheiro",
-        "amount": 149.9,
-        "machine": null,
-        "id": 1756911848995
-      }
-    ],
-    "date": "2025-09-03T15:04:11.058Z",
-    "quoteId": null
-  },
-  {
-    "id": "psdubqdon",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
+        "method": "Cartão de Crédito",
+        "amount": 400,
+        "machine": "Máquina B",
+        "id": 1756927125513
+      },
       {
-        "method": "Dinheiro",
-        "amount": 299.9,
+        "method": "PIX",
+        "amount": 159.6,
         "machine": null,
-        "id": 1756912028435
+        "id": 1756927142425
       }
     ],
-    "date": "2025-09-03T15:07:09.034Z",
-    "quoteId": null
-  },
-  {
-    "id": "o48ntxpka",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756912056266
-      }
-    ],
-    "date": "2025-09-03T15:07:43.450Z",
-    "quoteId": null
-  },
-  {
-    "id": "n53h06av9",
-    "productId": "4",
-    "productName": "Módulo de Subida de Vidro Elétrico",
-    "quantity": 1,
-    "unitPrice": 199.9,
-    "total": 199.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 199.9,
-        "machine": null,
-        "id": 1756912088330
-      }
-    ],
-    "date": "2025-09-03T15:08:08.874Z",
-    "quoteId": null
-  },
-  {
-    "id": "20lixk8h1",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756912111187
-      }
-    ],
-    "date": "2025-09-03T15:08:31.882Z",
-    "quoteId": null
-  },
-  {
-    "id": "k3o4c7emj",
-    "productId": "4",
-    "productName": "Módulo de Subida de Vidro Elétrico",
-    "quantity": 1,
-    "unitPrice": 199.9,
-    "total": 199.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 199.9,
-        "machine": null,
-        "id": 1756912129114
-      }
-    ],
-    "date": "2025-09-03T15:08:49.746Z",
-    "quoteId": null
-  },
-  {
-    "id": "kb6u6614s",
-    "productId": "4",
-    "productName": "Módulo de Subida de Vidro Elétrico",
-    "quantity": 1,
-    "unitPrice": 199.9,
-    "total": 199.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 199.9,
-        "machine": null,
-        "id": 1756912387826
-      }
-    ],
-    "date": "2025-09-03T15:13:08.354Z",
-    "quoteId": null
-  },
-  {
-    "id": "okq8jlymn",
-    "productId": "3",
-    "productName": "Kit Trava Elétrica 4 Portas",
-    "quantity": 1,
-    "unitPrice": 299.9,
-    "total": 299.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 299.9,
-        "machine": null,
-        "id": 1756912445739
-      }
-    ],
-    "date": "2025-09-03T15:14:06.226Z",
-    "quoteId": null
-  },
-  {
-    "id": "2by88rnea",
-    "productId": "4",
-    "productName": "Módulo de Subida de Vidro Elétrico",
-    "quantity": 1,
-    "unitPrice": 199.9,
-    "total": 199.9,
-    "customerId": null,
-    "customerName": "Cliente não identificado",
-    "paymentMethods": [
-      {
-        "method": "Dinheiro",
-        "amount": 199.9,
-        "machine": null,
-        "id": 1756912485326
-      }
-    ],
-    "date": "2025-09-03T15:14:46.778Z",
+    "date": "2025-09-03T19:19:07.997Z",
     "quoteId": null
   }
 ]

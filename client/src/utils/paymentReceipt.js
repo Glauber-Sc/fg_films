@@ -11,8 +11,8 @@ export const DEFAULT_COMPANY = {
   tagline: "acessórios automotivos",
   cnpj: "14.864.222/0001-67",
   phone: "(91) 98241-6768",
-  address: "Rua 15 de Agosto, nº 552, Cruzeiro/Icoaraci — Belém/PA.",
-  cityUF: "Belém/PA",
+  address: "Rua 15 de Agosto, nº 552, Cruzeiro/Icoaraci — Belém-PA.",
+  cityUF: "Belém-PA",
   logoUrl: "../assets/img/logo.png", // URL/asset da sua logo
 };
 
@@ -86,18 +86,25 @@ export function buildPaymentReceiptHTML(sale, companyOverride = {}) {
     ? `<img class="logo" src="${company.logoUrl}" alt="${company.name}" />`
     : `<div class="logo"></div>`; // fallback
 
-  const receiptHTML = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>Recibo</title><meta name="viewport" content="width=device-width, initial-scale=1"><style>
-      @page { size: A5 landscape; margin: 8mm; }
+  const receiptHTML = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title></title><meta name="viewport" content="width=device-width, initial-scale=1"><style>
+      @page { size: A4 portrait; margin: 10mm; }
       body { margin:0; padding:0; background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-      .sheet { width:730px; height:480px; margin:0 auto; padding:10px 12px; box-sizing:border-box; font-family:Arial, Helvetica, sans-serif; color:#000; border:1px solid #000; }
+
+      /* altura automática para nunca estourar o quadro */
+      .sheet {
+        width:730px; min-height:480px; height:auto;
+        margin:0 auto; padding:10px 12px; box-sizing:border-box;
+        font-family:Arial, Helvetica, sans-serif; color:#000; border:1px solid #000;
+        page-break-inside: avoid; break-inside: avoid; page-break-after: avoid;
+      }
 
       .topbar { display:flex; justify-content:space-between; align-items:center; border:1px solid #000; border-radius:10px; padding:10px 14px; height:auto; min-height:78px; }
       .brand { display:flex; align-items:center; gap:10px; }
 
-      /* >>> ÚNICAS alterações: LOGO MAIOR e sem espaço para o CNPJ <<< */
-      .brand .logo { height:130px; width:auto; object-fit:contain; display:block; margin-top:-20px; } /* maior */
-      .brand h1 { margin:0 0 -35px 0; line-height:0; } /* cola o CNPJ na logo (sem espaço) */
-      .brand .cnpj { margin-top:0; } /* garante zero espaço */
+      /* LOGO maior e colada no CNPJ */
+      .brand .logo { height:130px; width:auto; object-fit:contain; display:block; margin-top:-20px; }
+      .brand h1 { margin:0 0 -35px 0; line-height:0; }
+      .brand .cnpj { margin-top:0; }
 
       .brand .tag { margin-top:-2px; font-size:12px; letter-spacing:.5px; }
       .right-box { text-align:right; line-height:1.2; }
@@ -107,19 +114,38 @@ export function buildPaymentReceiptHTML(sale, companyOverride = {}) {
 
       .recibo-row { display:flex; justify-content:space-between; align-items:center; margin:12px 2px 6px; }
       .recibo-title { font-size:28px; font-weight:800; letter-spacing:1px; }
-      .rs-box { border:1px solid #000; width:150px; height:60px; border-radius:8px; position:relative; overflow:hidden; }
-      .rs-box span.label { position:absolute; top:-10px; left:8px; background:#fff; padding:0 4px; font-size:12px; }
+
+      /* Caixinha do valor — sem avaria e sem o rótulo superior */
+      .rs-box {
+        width:150px; height:60px; border-radius:8px; position:relative; overflow:hidden; background:#fff;
+      }
+      .rs-box::before {
+        content:""; position:absolute; inset:0; border-radius:inherit; box-shadow:0 0 0 1px #000 inset; pointer-events:none;
+      }
+
+      /* (REMOVIDO) .rs-box span.label { ... } */
+
       .rs-box .amount { font-size:18px; font-weight:700; text-align:center; margin-top:18px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
       .line { border:1px solid #000; border-radius:10px; padding:10px; margin:8px 2px; }
       .field { font-size:14px; margin:10px 0 6px; }
+
+      /* Linhas padrão (1 linha) */
       .fill { border-bottom:1px solid #000; height:24px; display:flex; align-items:center; padding:0 6px; font-size:14px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+
+      /* Permite múltiplas linhas quando necessário (sem cortar) */
+      .fill-wrap { border-bottom:1px solid #000; display:block; padding:2px 6px; font-size:14px; line-height:1.25; white-space:normal; word-break:break-word; height:auto; min-height:24px; }
+
       .muted { color:#000; opacity:.9; }
       .footer { display:flex; justify-content:space-between; align-items:flex-end; margin-top:26px; }
       .assin { width:48%; text-align:center; }
       .assin .line-sign { border-top:1px solid #000; height:3px; margin-top:26px; }
       .assin .label { font-size:13px; }
       .city { width:48%; font-size:14px; text-align:right; }
+
+      @media print {
+        .sheet { page-break-inside: avoid; break-inside: avoid; page-break-after: avoid; }
+      }
     </style></head><body>
       <div class="sheet">
         <div class="topbar">
@@ -137,16 +163,19 @@ export function buildPaymentReceiptHTML(sale, companyOverride = {}) {
 
         <div class="recibo-row">
           <div class="recibo-title">RECIBO</div>
-          <div class="rs-box"><span class="label">R$</span><div class="amount">${toBRL(sale.total)}</div></div>
+          <!-- (REMOVIDO) <span class="label">R$</span> -->
+          <div class="rs-box"><div class="amount">${toBRL(sale.total)}</div></div>
         </div>
 
         <div class="line">
           <div class="field">RECEBI (EMOS) DE:</div>
           <div class="fill">${sale.customerName || ""}</div>
+
           <div class="field">A IMPORTÂNCIA DE:</div>
-          <div class="fill">${importancia}</div>
+          <div class="fill-wrap">${importancia}</div>
+
           <div class="field">REFERENTE A:</div>
-          <div class="fill">${referente}</div>
+          <div class="fill-wrap">${referente}</div>
         </div>
 
         <div class="footer">
@@ -155,6 +184,10 @@ export function buildPaymentReceiptHTML(sale, companyOverride = {}) {
         </div>
       </div>
       <script>
+        // Título/URL vazios para não aparecerem como cabeçalhos do navegador
+        document.title = "";
+        try { history.replaceState(null, "", ""); } catch (e) {}
+
         window.addEventListener('load', function(){ window.print(); });
       </script>
     </body></html>`;
