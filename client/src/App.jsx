@@ -78,6 +78,7 @@ import AddProduct from "./pages/AddProduct"
 import EditProduct from "./pages/EditProduct"
 import Sales from "./pages/Sales"
 import NewSale from "./pages/NewSale"
+import ViewSale from "./pages/ViewSale"
 import Inventory from "./pages/Inventory"
 import Reports from "./pages/Reports"
 import PDV from "./pages/PDV"
@@ -93,6 +94,7 @@ import ViewQuote from "./pages/ViewQuote"
 import Expenses from "./pages/Expenses"
 import AddExpense from "./pages/AddExpense";
 import EditExpense from "./pages/EditExpense";
+
 
 function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
@@ -112,6 +114,7 @@ function Layout() {
             <Route path="/products/edit/:id" element={<EditProduct />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/sales/new" element={<NewSale />} />
+            <Route path="/sales/view/:id" element={<ViewSale />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/pdv" element={<PDV />} />

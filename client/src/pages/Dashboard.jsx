@@ -55,7 +55,7 @@ const Dashboard = () => {
           color="yellow"
         />
         <StatsCard
-          title="Produtos com Estoque Baixo/Esgotado"
+          title="Estoque Baixo/Esgotado"
           value={dashboardData.lowStockProducts}
           icon={ExclamationCircleIcon}
           color="red"
