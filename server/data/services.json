@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "date": "2025-09-06T10:30:00",
+    "description": "Instalação de som automotivo",
+    "employee": "Carlos Silva",
+    "value": 250,
+    "createdAt": "2025-09-06T13:30:00Z"
+  },
+  {
+    "id": 2,
+    "date": "2025-09-06T15:00:00",
+    "description": "Aplicação de insufilm",
+    "employee": "Marcos Souza",
+    "value": 180,
+    "createdAt": "2025-09-06T18:00:00Z"
+  },
+  {
+    "id": 3,
+    "date": "2025-09-06T12:00:00",
+    "description": "instalação de multimidia 2Dim",
+    "employee": "Daniel",
+    "value": 50,
+    "createdAt": "2025-09-06T04:55:28.606Z"
+  }
+]
