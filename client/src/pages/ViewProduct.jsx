@@ -189,7 +189,7 @@ export default function ViewProduct() {
         <div className="rounded-lg border bg-white p-4 shadow-sm">
           <p className="text-xs text-gray-500">Modelo compatível</p>
           <p className="text-sm font-medium text-gray-900">
-            {product.compatibleModel || "—"}
+            {product.compatible_model || "—"}
           </p>
         </div>
         <div className="rounded-lg border bg-white p-4 shadow-sm">
@@ -285,7 +285,7 @@ export default function ViewProduct() {
             </div>
             <div>
               <span className="text-gray-500">Modelo compatível:</span>{" "}
-              {product.compatibleModel || "—"}
+              {product.compatible_model || "—"}
             </div>
             <div>
               <span className="text-gray-500">Fornecedor:</span>{" "}

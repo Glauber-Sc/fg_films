@@ -114,7 +114,7 @@ const Inventory = () => {
       ? base.filter((p) =>
           String(p.name || "").toLowerCase().includes(term) ||
           String(p.brand || "").toLowerCase().includes(term) ||
-          String(p.compatibleModel || "").toLowerCase().includes(term)
+          String(p.compatible_model || "").toLowerCase().includes(term)
         )
       : base;
 
@@ -283,7 +283,7 @@ const Inventory = () => {
                       <tr key={p.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">{p.name}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{p.brand}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{p.compatibleModel}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{p.compatible_model}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           {kind !== "in" ? (
                             <div className="flex items-center">

@@ -13,7 +13,7 @@ const ProductForm = ({
   const [formData, setFormData] = useState({
     name: initialData.name ?? "",
     brand: initialData.brand ?? "",
-    compatibleModel: initialData.compatibleModel ?? "",
+    compatible_model: initialData.compatible_model ?? "",
     code: initialData.code ?? "",
     supplierId: initialData.supplierId ?? "",
     stock: initialData.stock ?? 0,
@@ -52,8 +52,8 @@ const ProductForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { name, brand, compatibleModel } = formData;
-    if (!name.trim() || !brand.trim() || !compatibleModel.trim()) return;
+    const { name, brand, compatible_model } = formData;
+    if (!name.trim() || !brand.trim() || !compatible_model.trim()) return;
 
     const payload = {
       ...formData,
@@ -103,15 +103,15 @@ const ProductForm = ({
 
         {/* Modelo compatível */}
         <div>
-          <label htmlFor="compatibleModel" className="mb-1 block text-sm font-medium text-gray-700">
+          <label htmlFor="compatible_model" className="mb-1 block text-sm font-medium text-gray-700">
             Modelo Compatível *
           </label>
           <input
-            id="compatibleModel"
-            name="compatibleModel"
+            id="compatible_model"
+            name="compatible_model"
             type="text"
             required
-            value={formData.compatibleModel}
+            value={formData.compatible_model}
             onChange={handleChange}
             className="w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/5"
           />

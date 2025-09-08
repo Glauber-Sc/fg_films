@@ -145,7 +145,7 @@ const ViewQuote = () => {
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between no-print">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">
-            Orçamento {quote.quoteNumber}
+            Orçamento {quote.quote_number}
           </h1>
           <p className="text-sm text-gray-500">
             Visualize, imprima ou converta em venda
@@ -279,7 +279,7 @@ const ViewQuote = () => {
 
   <div className="orc">
     <div className="t">ORÇAMENTO</div>
-    <div className="n">{quote.quoteNumber}</div>
+    <div className="n">{quote.quote_number}</div>
   </div>
 </div>
 

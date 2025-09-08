@@ -146,8 +146,8 @@ const Quotes = () => {
     const term = debouncedQuery.trim().toLowerCase();
     const searched = term
       ? base.filter((quote) => {
-          const numberMatch = String(quote.quoteNumber ?? "").toLowerCase().includes(term);
-          const customerMatch = String(quote.customerName ?? "").toLowerCase().includes(term);
+          const numberMatch = String(quote.quote_number ?? "").toLowerCase().includes(term);
+          const customerMatch = String(quote.customer_name ?? "").toLowerCase().includes(term);
           return numberMatch || customerMatch;
         })
       : base;
@@ -312,9 +312,9 @@ const Quotes = () => {
                 {currentItems.length > 0 ? (
                   currentItems.map((quote) => (
                     <tr key={quote.id} className="hover:bg-gray-50">
-                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{quote.quoteNumber}</td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{quote.quote_number}</td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{new Date(quote.date).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{quote.customerName || "Cliente não informado"}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{quote.customer_name || "Cliente não informado"}</td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{formatCurrency(quote.total)}</td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm"><StatusBadge status={(quote.status || "").toLowerCase()} /></td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm">

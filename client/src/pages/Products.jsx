@@ -186,7 +186,7 @@ const Products = () => {
     "code",
     "name",
     "brand",
-    "compatibleModel",
+    "compatible_model",
     "stock",
     "lowStock",
     "price",
@@ -195,7 +195,7 @@ const Products = () => {
     code: "Código",
     name: "Nome",
     brand: "Marca",
-    compatibleModel: "Modelo Compatível",
+    compatible_model: "Modelo Compatível",
     stock: "Estoque",
     lowStock: "Alerta",
     price: "Preço",
@@ -276,8 +276,8 @@ const Products = () => {
         code: r[idx("code")] ?? "",
         name: r[idx("name")] ?? "",
         brand: r[idx("brand")] ?? "",
-        compatibleModel:
-          r[idx("compatibleModel")] ?? r[idx("modelo compatível")] ?? "",
+        compatible_model:
+          r[idx("compatible_model")] ?? r[idx("modelo compatível")] ?? "",
         stock: Number(r[idx("stock")] ?? 0) || 0,
         lowStock: Number(r[idx("lowStock")] ?? r[idx("alerta")] ?? 0) || 0,
         price: Number(String(r[idx("price")] ?? 0).replace(",", ".")) || 0,
@@ -330,7 +330,7 @@ const Products = () => {
       code: p.code ?? "",
       name: p.name ?? "",
       brand: p.brand ?? "",
-      compatibleModel: p.compatibleModel ?? "",
+      compatible_model: p.compatible_model ?? "",
       stock: Number(p.stock ?? 0),
       lowStock: Number(p.lowStock ?? 0),
       price: Number(p.price ?? 0),
@@ -379,7 +379,7 @@ const Products = () => {
           code: r["Código"] ?? r.code ?? "",
           name: r["Nome"] ?? r.name ?? "",
           brand: r["Marca"] ?? r.brand ?? "",
-          compatibleModel: r["Modelo Compatível"] ?? r.compatibleModel ?? "",
+          compatible_model: r["Modelo Compatível"] ?? r.compatible_model ?? "",
           stock: Number(r["Estoque"] ?? r.stock ?? 0) || 0,
           lowStock: Number(r["Alerta"] ?? r.lowStock ?? 0) || 0,
           price:
@@ -425,7 +425,7 @@ const Products = () => {
           const fields = [
             product.name,
             product.brand,
-            product.compatibleModel,
+            product.compatible_model,
             product.code,
           ];
           return fields
@@ -735,7 +735,7 @@ const Products = () => {
                           {product.brand}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {product.compatibleModel}
+                          {product.compatible_model}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           <span
