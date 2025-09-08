@@ -446,6 +446,14 @@ const Sales = () => {
                         </td>
 
                         <td className="whitespace-nowrap px-6 py-4 text-sm">
+
+                           <Link
+                            to={`/sales/view/${encodeURIComponent(sale.id)}`}
+                            className="p-1 text-gray-700 hover:text-gray-900 inline-flex items-center"
+                            title="Ver detalhes"
+                          >
+                            <EyeIcon className="h-5 w-5" />
+                          </Link>
                           <button
                             onClick={() =>
                               paymentReceipt(
@@ -461,14 +469,6 @@ const Sales = () => {
                           >
                             <DocumentArrowDownIcon className="h-5 w-5" />
                           </button>
-
-                          <Link
-                            to={`/sales/view/${encodeURIComponent(sale.id)}`}
-                            className="p-1 text-gray-700 hover:text-gray-900 inline-flex items-center"
-                            title="Ver detalhes"
-                          >
-                            <EyeIcon className="h-5 w-5" />
-                          </Link>
                         </td>
                       </tr>
                     );

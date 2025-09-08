@@ -1,26 +1,20 @@
 [
   {
     "id": 1,
-    "date": "2025-09-06T10:30:00",
-    "description": "Instalação de som automotivo",
-    "employee": "Carlos Silva",
-    "value": 250,
-    "createdAt": "2025-09-06T13:30:00Z"
-  },
-  {
-    "id": 2,
-    "date": "2025-09-06T15:00:00",
-    "description": "Aplicação de insufilm",
-    "employee": "Marcos Souza",
-    "value": 180,
-    "createdAt": "2025-09-06T18:00:00Z"
-  },
-  {
-    "id": 3,
-    "date": "2025-09-06T12:00:00",
-    "description": "instalação de multimidia 2Dim",
+    "date": "2025-09-08T12:00:00",
+    "description": "Instalação de Alarme Positron",
     "employee": "Daniel",
-    "value": 50,
-    "createdAt": "2025-09-06T04:55:28.606Z"
+    "value": 100,
+    "createdAt": "2025-09-08T15:13:43.894Z",
+    "paymentMethods": [
+      {
+        "method": "PIX",
+        "amount": 100,
+        "machine": "",
+        "installments": ""
+      }
+    ],
+    "paidTotal": 100,
+    "paidAt": "2025-09-08T15:13:43.894Z"
   }
 ]

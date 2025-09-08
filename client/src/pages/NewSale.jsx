@@ -1,9 +1,6 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
-import PageHeader from "../components/PageHeader"
 import Card from "../components/Card"
 import { formatCurrency } from "../utils/format"
 import { fetchProducts, fetchCustomers, createSale } from "../services/api"
@@ -204,8 +201,11 @@ const NewSale = () => {
   }
 
   return (
-    <div>
-      <PageHeader title="Registrar Nova Venda" />
+    <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-gray-900">Nova Venda</h1>
+        <p className="text-sm text-gray-500">Cadastre uma nova Venda no sistema</p>
+      </div>
 
       <Card>
         {isLoading ? (

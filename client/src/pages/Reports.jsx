@@ -6,6 +6,14 @@ import { formatCurrency, formatDate } from "../utils/format";
 import { fetchReports, fetchSales } from "../services/api";
 import { groupSales } from "../utils/groupSales";
 import { ChevronLeftIcon, ChevronRightIcon, ArrowDownTrayIcon, EyeIcon } from "@heroicons/react/24/outline";
+import {
+  ShoppingCartIcon,
+  WrenchScrewdriverIcon,
+  BanknotesIcon,
+  ChartBarIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
+} from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -142,6 +150,82 @@ function Pagination({ currentPage, totalPages, onChange, className = "", windowS
   );
 }
 
+// ========================
+// ===== KPIs (estilo imagem): helpers + componente
+// ========================
+const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+function buildPrevParamsFromFilters(filters, debouncedSearch) {
+  const common = { search: debouncedSearch };
+
+  if (filters.mode === "day") {
+    const prev = shiftDate(filters.date, -1);
+    return { ...common, from: toISO(prev), to: toISO(prev, true) };
+  }
+
+  if (filters.mode === "month") {
+    const [y, m] = filters.month.split("-").map(Number);
+    const prevY = m === 1 ? y - 1 : y;
+    const prevM = m === 1 ? 12 : m - 1;
+    const prevYM = `${prevY}-${pad(prevM)}`;
+    return { ...common, from: toISO(startOfMonth(prevYM)), to: toISO(endOfMonth(prevYM), true) };
+  }
+
+  // range: compara com período anterior de mesmo tamanho
+  const start = new Date(filters.startDate);
+  const end = new Date(filters.endDate);
+  const ms = (end - start) + 24 * 60 * 60 * 1000; // incluir dia final
+  const prevStart = new Date(start.getTime() - ms);
+  const prevEnd = new Date(end.getTime() - ms);
+  return { ...common, from: toISO(ymd(prevStart)), to: toISO(ymd(prevEnd), true) };
+}
+
+const pctChange = (curr, prev) => {
+  const c = Number(curr || 0), p = Number(prev || 0);
+  if (!isFinite(c) || !isFinite(p) || p === 0) return null;
+  return ((c - p) / Math.abs(p)) * 100;
+};
+const fmtPct = (n) => `${Math.abs(n).toFixed(1)}%`;
+
+const trendLabelFromMode = (mode) =>
+  mode === "day"   ? "em relação a ontem" :
+  mode === "month" ? "em relação ao mês anterior" :
+                     "em relação ao período anterior";
+
+function MetricCard({ title, valueText, icon: Icon, iconClass, curr, prev, label }) {
+  const pct = pctChange(curr, prev);
+  const up = (pct ?? 0) >= 0;
+
+  return (
+    <div className="bg-white border border-gray-100 shadow rounded-2xl p-5">
+      <div className="flex items-start justify-between">
+        <h3 className="text-sm font-medium text-gray-500">{title}</h3>
+        <span className={`h-9 w-9 rounded-full inline-flex items-center justify-center ${iconClass}`}>
+          <Icon className="h-5 w-5" />
+        </span>
+      </div>
+
+      <div className="mt-1 text-2xl font-semibold text-gray-900">{valueText}</div>
+
+      {pct === null ? (
+        <div className="mt-1 text-sm text-gray-400">Sem base de comparação</div>
+      ) : (
+        <div className="mt-1 flex items-center text-sm">
+          {up ? (
+            <ArrowTrendingUpIcon className="h-4 w-4 text-green-600 mr-1" />
+          ) : (
+            <ArrowTrendingDownIcon className="h-4 w-4 text-red-600 mr-1" />
+          )}
+          <span className={up ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+            {fmtPct(pct)}
+          </span>
+          <span className="ml-1 text-gray-500">{up ? "acima" : "abaixo"} {label}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Reports() {
   // ===== filtros (padrão: Dia/Hoje) =====
   const [filters, setFilters] = useState({
@@ -154,7 +238,14 @@ export default function Reports() {
   });
   const debouncedSearch = useDebounce(filters.search, 300);
 
-  const [data, setData] = useState({ dailySales: [], monthlySales: [], ledger: [], totals: { revenue: 0, expenses: 0, net: 0 } });
+  const [data, setData] = useState({
+    dailySales: [],
+    dailyServices: [],
+    monthlySales: [],
+    monthlyServices: [],
+    ledger: [],
+    totals: { revenueSales: 0, revenueServices: 0, revenue: 0, expenses: 0, net: 0 }
+  });
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
 
@@ -216,12 +307,27 @@ export default function Reports() {
     return { ...common, from: toISO(filters.startDate), to: toISO(filters.endDate, true) };
   };
 
+  // Totais do período anterior (para variação dos cards)
+  const [prevTotals, setPrevTotals] = useState({
+    revenueSales: 0,
+    revenueServices: 0,
+    expenses: 0,
+    net: 0,
+  });
+
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
+
+        // período atual
         const res = await fetchReports(buildParams());
         setData(res || {});
+
+        // período anterior equivalente (ontem / mês anterior / mesmo intervalo anterior)
+        const prevParams = buildPrevParamsFromFilters(filters, debouncedSearch);
+        const prevRes = await fetchReports(prevParams);
+        setPrevTotals(prevRes?.totals || { revenueSales: 0, revenueServices: 0, expenses: 0, net: 0 });
       } finally { setLoading(false); }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -274,14 +380,20 @@ export default function Reports() {
   const endIdx = Math.min(startIdx + pageSize, totalItems);
   const rows = ledgerView.slice(startIdx, endIdx);
 
-  // ===== gráficos =====
+  // ===== gráficos: COMPARAÇÃO VENDAS x SERVIÇOS =====
   const dailySalesChartData = {
     labels: (data.dailySales ?? []).map(i => i.date),
-    datasets: [{ label: "Vendas Diárias (R$)", data: (data.dailySales ?? []).map(i => i.total), backgroundColor: "rgba(59,130,246,.5)", borderColor: "rgb(59,130,246)", borderWidth: 1 }],
+    datasets: [
+      { label: "Vendas (R$)",   data: (data.dailySales ?? []).map(i => i.total),    backgroundColor: "rgba(59,130,246,.6)",  borderColor: "rgb(59,130,246)",  borderWidth: 1 },
+      { label: "Serviços (R$)", data: (data.dailyServices ?? []).map(i => i.total), backgroundColor: "rgba(234,88,12,.6)",  borderColor: "rgb(234,88,12)",  borderWidth: 1 },
+    ],
   };
   const monthlySalesChartData = {
     labels: (data.monthlySales ?? []).map(i => i.month),
-    datasets: [{ label: "Vendas Mensais (R$)", data: (data.monthlySales ?? []).map(i => i.total), backgroundColor: "rgba(16,185,129,.5)", borderColor: "rgb(16,185,129)", borderWidth: 1 }],
+    datasets: [
+      { label: "Vendas (R$)",   data: (data.monthlySales ?? []).map(i => i.total),     backgroundColor: "rgba(16,185,129,.6)", borderColor: "rgb(16,185,129)", borderWidth: 1 },
+      { label: "Serviços (R$)", data: (data.monthlyServices ?? []).map(i => i.total),  backgroundColor: "rgba(99,102,241,.6)", borderColor: "rgb(99,102,241)", borderWidth: 1 },
+    ],
   };
   const chartOptions = { responsive: true, plugins: { legend: { position: "top" }, title: { display: false }, tooltip: { mode: "index", intersect: false } }, scales: { y: { beginAtZero: true }, x: { ticks: { autoSkip: true, maxRotation: 0 } } } };
 
@@ -321,14 +433,14 @@ export default function Reports() {
     filters.mode === "month" ? filters.month :
     `${filters.startDate} a ${filters.endDate}`;
 
-  const totals = data.totals || { revenue: 0, expenses: 0, net: 0 };
+  const totals = data.totals || { revenueSales: 0, revenueServices: 0, revenue: 0, expenses: 0, net: 0 };
 
   return (
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">Relatórios</h1>
-        <p className="text-sm text-gray-500">Painel central de desempenho e vendas (vendas e despesas)</p>
+        <p className="text-sm text-gray-500">Painel central de desempenho: Vendas, Serviços e Despesas</p>
       </div>
 
       {/* Topbar */}
@@ -342,19 +454,13 @@ export default function Reports() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            {/* === NAVEGAÇÃO DE DIA: setas envolvendo o dropdown; sem botão "Hoje" separado === */}
+            {/* Navegação de dia */}
             {filters.mode === "day" ? (
               <div className="flex items-center gap-2">
-                {/* < */}
-                <button
-                  onClick={goPrevDay}
-                  className="inline-flex items-center rounded-md border px-2 py-1 text-sm hover:bg-gray-50"
-                  title="Dia anterior"
-                >
+                <button onClick={goPrevDay} className="inline-flex items-center rounded-md border px-2 py-1 text-sm hover:bg-gray-50" title="Dia anterior">
                   <ChevronLeftIcon className="h-4 w-4" />
                 </button>
 
-                {/* Dropdown (Hoje/Mês atual/Período) */}
                 <div className="relative">
                   <button
                     ref={dateBtnRef}
@@ -383,39 +489,15 @@ export default function Reports() {
                           <Input type="date" value={filters.date} onChange={(e) => setFilters(f => ({ ...f, date: e.target.value }))} />
                         </div>
                       )}
-                      {filters.mode === "month" && (
-                        <div className="space-y-1">
-                          <div className="text-xs font-semibold text-gray-500 px-1">Mês</div>
-                          <Input type="month" value={filters.month} onChange={(e) => setFilters(f => ({ ...f, month: e.target.value }))} />
-                        </div>
-                      )}
-                      {filters.mode === "range" && (
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <div className="text-xs font-semibold text-gray-500 px-1">Início</div>
-                            <Input type="date" value={filters.startDate} onChange={(e) => setFilters(f => ({ ...f, startDate: e.target.value }))} />
-                          </div>
-                          <div>
-                            <div className="text-xs font-semibold text-gray-500 px-1">Fim</div>
-                            <Input type="date" value={filters.endDate} min={filters.startDate} onChange={(e) => setFilters(f => ({ ...f, endDate: e.target.value }))} />
-                          </div>
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>
 
-                {/* > */}
-                <button
-                  onClick={goNextDay}
-                  className="inline-flex items-center rounded-md border px-2 py-1 text-sm hover:bg-gray-50"
-                  title="Próximo dia"
-                >
+                <button onClick={goNextDay} className="inline-flex items-center rounded-md border px-2 py-1 text-sm hover:bg-gray-50" title="Próximo dia">
                   <ChevronRightIcon className="h-4 w-4" />
                 </button>
               </div>
             ) : (
-              // Nos outros modos mantém só o dropdown como já estava
               <div className="relative">
                 <button
                   ref={dateBtnRef}
@@ -437,12 +519,6 @@ export default function Reports() {
                       <button className="rounded-md border px-2 py-2 text-left text-sm hover:bg-gray-50" onClick={() => { const r = lastNDays(30); setFilters(f => ({ ...f, mode: "range", startDate: r.start, endDate: r.end })); setOpenDate(false); }}>Últimos 30 dias</button>
                     </div>
                     <div className="my-3 h-px bg-gray-100" />
-                    {filters.mode === "day" && (
-                      <div className="space-y-1">
-                        <div className="text-xs font-semibold text-gray-500 px-1">Dia</div>
-                        <Input type="date" value={filters.date} onChange={(e) => setFilters(f => ({ ...f, date: e.target.value }))} />
-                      </div>
-                    )}
                     {filters.mode === "month" && (
                       <div className="space-y-1">
                         <div className="text-xs font-semibold text-gray-500 px-1">Mês</div>
@@ -518,31 +594,67 @@ export default function Reports() {
 
       {/* Período */}
       <div className="mt-2 text-sm text-black-500">
-  Período atual: <strong>
-    {filters.mode === "day"
-      ? formatDate(filters.date)
-      : filters.mode === "month"
-      ? filters.month
-      : `${formatDate(filters.startDate)} a ${formatDate(filters.endDate)}`
-    }
-  </strong>
-</div>
-
-
-      {/* KPIs gerais */}
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card title="Vendas do Período"><div className="text-2xl font-semibold">{formatCurrency(totals.revenue)}</div></Card>
-        <Card title="Despesas do Período"><div className="text-2xl font-semibold text-red-600">{formatCurrency(totals.expenses)}</div></Card>
-        <Card title="Saldo (Vendas - Despesas)"><div className={`text-2xl font-semibold ${totals.net < 0 ? "text-red-600" : "text-green-700"}`}>{formatCurrency(totals.net)}</div></Card>
+        Período atual: <strong>
+          {filters.mode === "day"
+            ? formatDate(filters.date)
+            : filters.mode === "month"
+            ? filters.month
+            : `${formatDate(filters.startDate)} a ${formatDate(filters.endDate)}`
+          }
+        </strong>
       </div>
 
-      {/* Gráficos */}
+      {/* KPIs no estilo da imagem */}
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <MetricCard
+          title="Vendas do Período"
+          valueText={formatCurrency((data.totals?.revenueSales) || 0)}
+          icon={ShoppingCartIcon}
+          iconClass="bg-indigo-100 text-indigo-600"
+          curr={(data.totals?.revenueSales) || 0}
+          prev={(prevTotals?.revenueSales) || 0}
+          label={trendLabelFromMode(filters.mode)}
+        />
+        <MetricCard
+          title="Serviços do Período"
+          valueText={formatCurrency((data.totals?.revenueServices) || 0)}
+          icon={WrenchScrewdriverIcon}
+          iconClass="bg-amber-100 text-amber-600"
+          curr={(data.totals?.revenueServices) || 0}
+          prev={(prevTotals?.revenueServices) || 0}
+          label={trendLabelFromMode(filters.mode)}
+        />
+        <MetricCard
+          title="Despesas do Período"
+          valueText={formatCurrency((data.totals?.expenses) || 0)}
+          icon={BanknotesIcon}
+          iconClass="bg-rose-100 text-rose-600"
+          curr={(data.totals?.expenses) || 0}
+          prev={(prevTotals?.expenses) || 0}
+          label={trendLabelFromMode(filters.mode)}
+        />
+        <MetricCard
+          title="Saldo (Receitas - Despesas)"
+          valueText={formatCurrency((data.totals?.net) || 0)}
+          icon={ChartBarIcon}
+          iconClass="bg-emerald-100 text-emerald-600"
+          curr={(data.totals?.net) || 0}
+          prev={(prevTotals?.net) || 0}
+          label={trendLabelFromMode(filters.mode)}
+        />
+      </div>
+
+      {/* Gráficos (Comparação Vendas x Serviços) */}
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card title="Vendas Diárias"><div className="h-80"><Bar data={dailySalesChartData} options={chartOptions} /></div></Card>
-        <Card title="Vendas Mensais"><div className="h-80"><Bar data={monthlySalesChartData} options={chartOptions} /></div></Card>
+        <Card title="Receita Diária">
+          <div className="h-80"><Bar data={dailySalesChartData} options={chartOptions} /></div>
+        </Card>
+        <Card title="Receita Mensal">
+          <div className="h-80"><Bar data={monthlySalesChartData} options={chartOptions} /></div>
+        </Card>
       </div>
 
-      {/* Tabela: Fluxo de Caixa */}
+      {/* Tabela: Fluxo de Caixa (já inclui Vendas, Serviços e Despesas) */}
       <div className="mt-6">
         <div className="overflow-hidden rounded-lg bg-white shadow">
           <div className="flex items-start justify-between border-b bg-gray-50 px-6 py-4">
@@ -565,7 +677,7 @@ export default function Reports() {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-500 mb-1">Totais do dia atual</p>
+              <p className="text-xs text-gray-500 mb-1">Totais do período exibido</p>
               <div className="text-sm text-gray-700">
                 <span className="mr-3">Entrada: <strong>{formatCurrency(viewTotals.in)}</strong></span>
                 <span className="mr-3">Saída: <strong className="text-red-600">{formatCurrency(viewTotals.out)}</strong></span>
@@ -642,805 +754,3 @@ export default function Reports() {
     </div>
   );
 }
-
-
-// import { useEffect, useMemo, useRef, useState, useTransition } from "react";
-// import { Bar, Line, Doughnut } from "react-chartjs-2";
-// import {
-//   Chart as ChartJS,
-//   CategoryScale,
-//   LinearScale,
-//   BarElement,
-//   PointElement,
-//   LineElement,
-//   ArcElement,
-//   RadialLinearScale,
-//   Title,
-//   Tooltip,
-//   Legend,
-//   Filler,
-// } from "chart.js";
-// import { Link } from "react-router-dom";
-// import { formatCurrency, formatDate } from "../utils/format";
-// import { fetchReports, fetchSales } from "../services/api";
-// import { groupSales } from "../utils/groupSales";
-// import {
-//   ArrowDownTrayIcon,
-//   ArrowPathIcon,
-//   ArrowTrendingDownIcon,
-//   ArrowTrendingUpIcon,
-//   CalendarDaysIcon,
-//   ChartBarIcon,
-//   ChartPieIcon,
-//   ListBulletIcon,
-//   MagnifyingGlassIcon,
-//   SparklesIcon,
-//   XMarkIcon,
-//   ChevronLeftIcon,
-//   ChevronRightIcon,
-//   EyeIcon,
-//   BookmarkIcon,
-// } from "@heroicons/react/24/outline";
-
-// /**
-//  * PRO REPORTS DASHBOARD
-//  * - Reimagined layout
-//  * - KPI cards with deltas + sparklines
-//  * - Revenue vs Expenses area lines
-//  * - Payment split doughnut
-//  * - Top customers leaderboard
-//  * - Powerful toolbar (quick presets, search, persist filters)
-//  * - Sortable table with running balance in *current order*
-//  */
-
-// ChartJS.register(
-//   CategoryScale,
-//   LinearScale,
-//   RadialLinearScale,
-//   BarElement,
-//   PointElement,
-//   LineElement,
-//   ArcElement,
-//   Title,
-//   Tooltip,
-//   Legend,
-//   Filler
-// );
-
-// // ---------- utils ----------
-// const pad = (n) => String(n).padStart(2, "0");
-// const today = () => {
-//   const d = new Date();
-//   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-// };
-// const thisMonth = () => {
-//   const d = new Date();
-//   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
-// };
-// const startOfMonth = (ym) => {
-//   const [y, m] = ym.split("-").map(Number);
-//   return `${y}-${pad(m)}-01`;
-// };
-// const endOfMonth = (ym) => {
-//   const [y, m] = ym.split("-").map(Number);
-//   const last = new Date(y, m, 0).getDate();
-//   return `${y}-${pad(m)}-${pad(last)}`;
-// };
-// const toISO = (date, eod = false) => (eod ? `${date}T23:59:59` : `${date}T00:00:00`);
-// const padTime = (dateVal) => {
-//   const d = new Date(dateVal);
-//   if (isNaN(d)) return String(dateVal || "");
-//   d.setSeconds(0, 0);
-//   return d.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
-// };
-// const normalizePayText = (t = "") =>
-//   String(t).toLowerCase().replace(/\s+/g, " ").replace(/r\$\s?/g, "").trim();
-// const concatPMs = (pms = []) =>
-//   pms.map((pm) => `${pm.method}${pm.machine ? ` (${pm.machine})` : ""}: ${Number(pm.amount || 0).toFixed(2)}`).join(" | ");
-// const shiftDate = (dateStr, deltaDays) => {
-//   const [y, m, d] = dateStr.split("-").map(Number);
-//   const dt = new Date(y, m - 1, d);
-//   dt.setDate(dt.getDate() + deltaDays);
-//   return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
-// };
-// const lastNDays = (n) => {
-//   const end = new Date();
-//   const start = new Date();
-//   start.setDate(end.getDate() - (n - 1));
-//   const fmt = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-//   return { start: fmt(start), end: fmt(end) };
-// };
-// const useDebounce = (v, d = 350) => {
-//   const [x, setX] = useState(v);
-//   useEffect(() => {
-//     const id = setTimeout(() => setX(v), d);
-//     return () => clearTimeout(id);
-//   }, [v, d]);
-//   return x;
-// };
-// const usePrevious = (val) => {
-//   const ref = useRef();
-//   useEffect(() => void (ref.current = val), [val]);
-//   return ref.current;
-// };
-
-// // ---------- compact sales (1 row per sale) ----------
-// function compactLedgerSales(arr = []) {
-//   const groups = new Map();
-//   const pmSig = (list = []) => list.map((pm) => `${pm.method}|${pm.machine || ""}|${Number(pm.amount || 0).toFixed(2)}`).join("||");
-//   const exactGroupKey = (l) => {
-//     const paymentsArr = Array.isArray(l.paymentMethods) ? l.paymentMethods : Array.isArray(l.payments) ? l.payments : null;
-//     if (!paymentsArr) return undefined;
-//     const dateIso = new Date(l.date).toISOString();
-//     return `${l.customerId || ""}#${dateIso}#${pmSig(paymentsArr)}`;
-//   };
-//   const paymentTextSig = (l) => normalizePayText(l.payment || "");
-//   const makeAggKey = (l) =>
-//     l.saleGroupId ||
-//     l.groupId ||
-//     l.quoteId ||
-//     l.saleId ||
-//     `${l.customerId || ""}#${padTime(l.date)}#${paymentTextSig(l)}#${l.customerName || ""}`;
-
-//   const nonSales = [];
-//   arr.forEach((l, idx) => {
-//     const t = (l.type || "").toLowerCase();
-//     if (t !== "sale" && t !== "venda") {
-//       nonSales.push({ ...l, _order: idx });
-//       return;
-//     }
-//     const key = makeAggKey(l);
-//     const ex = groups.get(key);
-//     const base = {
-//       ...l,
-//       in: Number(l.in || 0),
-//       out: Number(l.out || 0),
-//       _count: 1,
-//       _payments: new Set(l.payment ? [String(l.payment)] : []),
-//       _order: idx,
-//       viewId: l.saleGroupId || l.groupId || l.quoteId || l.saleId || exactGroupKey(l) || key,
-//     };
-//     if (!ex) groups.set(key, base);
-//     else {
-//       ex.in += Number(l.in || 0);
-//       ex.out += Number(l.out || 0);
-//       ex._count += 1;
-//       if (l.payment) ex._payments.add(String(l.payment));
-//     }
-//   });
-//   const salesAggregated = Array.from(groups.values()).map((g) => {
-//     const payments = g._payments.size ? Array.from(g._payments).join(" | ") : g.payment || "—";
-//     const countExtra = g._count > 1 ? ` (+${g._count - 1} itens)` : "";
-//     const { _count, _payments, _order, ...rest } = g;
-//     return { ...rest, payment: payments, description: g.description ? `${g.description}${countExtra}` : `Venda${countExtra}`, _order };
-//   });
-//   return [...nonSales, ...salesAggregated].sort((a, b) => a._order - b._order).map(({ _order, ...row }) => row);
-// }
-
-// // ---------- atoms ----------
-// const Panel = ({ title, action, children, className = "" }) => (
-//   <div className={`rounded-2xl border border-gray-200 bg-white shadow-sm ${className}`}>
-//     <div className="flex items-center justify-between border-b px-5 py-3">
-//       <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
-//       {action}
-//     </div>
-//     <div className="p-5">{children}</div>
-//   </div>
-// );
-
-// const Delta = ({ value }) => {
-//   if (value == null || isNaN(value)) return null;
-//   const positive = value > 0;
-//   const Icon = positive ? ArrowTrendingUpIcon : ArrowTrendingDownIcon;
-//   return (
-//     <span className={`inline-flex items-center gap-1 text-xs ${positive ? "text-green-700" : "text-red-600"}`}>
-//       <Icon className="h-4 w-4" />
-//       {positive ? "+" : ""}{value.toFixed(1)}%
-//     </span>
-//   );
-// };
-
-// const Sparkline = ({ points = [] }) => {
-//   const labels = points.map((_, i) => String(i + 1));
-//   const data = {
-//     labels,
-//     datasets: [
-//       {
-//         data: points,
-//         borderColor: "rgb(59,130,246)",
-//         backgroundColor: "rgba(59,130,246,.25)",
-//         borderWidth: 1,
-//         pointRadius: 0,
-//         tension: 0.35,
-//         fill: true,
-//       },
-//     ],
-//   };
-//   const options = {
-//     responsive: true,
-//     maintainAspectRatio: false,
-//     plugins: { legend: { display: false }, tooltip: { enabled: false } },
-//     scales: { x: { display: false }, y: { display: false } },
-//   };
-//   return (
-//     <div className="h-8 w-24">
-//       <Line data={data} options={options} />
-//     </div>
-//   );
-// };
-
-// // ---------- main component ----------
-// export default function ProReportsDashboard() {
-//   // filters
-//   const [filters, setFilters] = useState(() => {
-//     // restore last session
-//     const raw = typeof window !== "undefined" ? localStorage.getItem("proReportsFilters") : null;
-//     if (raw) {
-//       try {
-//         const parsed = JSON.parse(raw);
-//         // safety: ensure required keys
-//         return { mode: "day", date: today(), month: thisMonth(), startDate: today(), endDate: today(), search: "", ...parsed };
-//       } catch {}
-//     }
-//     return { mode: "day", date: today(), month: thisMonth(), startDate: today(), endDate: today(), search: "" };
-//   });
-//   const debouncedSearch = useDebounce(filters.search, 250);
-//   useEffect(() => {
-//     if (typeof window !== "undefined") localStorage.setItem("proReportsFilters", JSON.stringify(filters));
-//   }, [filters]);
-
-//   // state
-//   const [data, setData] = useState({ dailySales: [], monthlySales: [], ledger: [], totals: { revenue: 0, expenses: 0, net: 0 } });
-//   const [prevData, setPrevData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const [exporting, setExporting] = useState(false);
-//   const [isPending, startTransition] = useTransition();
-//   const prevFilters = usePrevious(filters);
-
-//   // sale index (resolve ViewSale id)
-//   const [saleIndex, setSaleIndex] = useState(null);
-//   useEffect(() => {
-//     (async () => {
-//       try {
-//         const raw = await fetchSales();
-//         const grouped = groupSales(raw);
-//         const idx = new Map();
-//         for (const g of grouped) {
-//           idx.set(String(g.id), g.id);
-//           const custKey = String(g.customerId || "").toLowerCase();
-//           const nameKey = String(g.customerName || "").toLowerCase();
-//           const mIso = padTime(g.date);
-//           const payText = normalizePayText(concatPMs(g.paymentMethods || []));
-//           const totalKey = Number(g.total || 0).toFixed(2);
-//           idx.set(`${custKey}|${mIso}|${payText}`, g.id);
-//           idx.set(`${nameKey}|${mIso}|${payText}`, g.id);
-//           idx.set(`${custKey}|${mIso}|${totalKey}`, g.id);
-//           idx.set(`${nameKey}|${mIso}|${totalKey}`, g.id);
-//         }
-//         setSaleIndex(idx);
-//       } catch (e) {
-//         console.error("Falha ao montar índice de vendas:", e);
-//         setSaleIndex(new Map());
-//       }
-//     })();
-//   }, []);
-
-//   const resolveViewId = (row) => {
-//     if (!saleIndex) return null;
-//     if (row.viewId && saleIndex.has(String(row.viewId))) return saleIndex.get(String(row.viewId));
-//     const custKey = String(row.customerId || "").toLowerCase();
-//     const nameKey = String(row.customerName || "").toLowerCase();
-//     const mIso = padTime(row.date);
-//     const payKey = normalizePayText(row.payment || "");
-//     const totalKey = Number(row.in || 0).toFixed(2);
-//     const tries = [
-//       `${custKey}|${mIso}|${payKey}`,
-//       `${nameKey}|${mIso}|${payKey}`,
-//       `${custKey}|${mIso}|${totalKey}`,
-//       `${nameKey}|${mIso}|${totalKey}`,
-//       String(row.viewId || ""),
-//     ];
-//     for (const k of tries) if (k && saleIndex.has(k)) return saleIndex.get(k);
-//     return null;
-//   };
-
-//   const periodLabel = useMemo(() => {
-//     if (filters.mode === "day") return formatDate(filters.date);
-//     if (filters.mode === "month") return filters.month;
-//     return `${formatDate(filters.startDate)} a ${formatDate(filters.endDate)}`;
-//   }, [filters]);
-
-//   // build params + previous-period params
-//   const buildParams = () => {
-//     const common = { search: debouncedSearch };
-//     if (filters.mode === "day") return { ...common, from: toISO(filters.date), to: toISO(filters.date, true) };
-//     if (filters.mode === "month") return { ...common, from: toISO(startOfMonth(filters.month)), to: toISO(endOfMonth(filters.month), true) };
-//     return { ...common, from: toISO(filters.startDate), to: toISO(filters.endDate, true) };
-//   };
-//   const buildPrevParams = () => {
-//     if (filters.mode === "day") {
-//       const prev = shiftDate(filters.date, -1);
-//       return { from: toISO(prev), to: toISO(prev, true), search: "" };
-//     }
-//     if (filters.mode === "month") {
-//       const [y, m] = filters.month.split("-").map(Number);
-//       const prevM = new Date(y, m - 2, 1);
-//       const ym = `${prevM.getFullYear()}-${pad(prevM.getMonth() + 1)}`;
-//       return { from: toISO(startOfMonth(ym)), to: toISO(endOfMonth(ym), true), search: "" };
-//     }
-//     // range
-//     const start = new Date(filters.startDate);
-//     const end = new Date(filters.endDate);
-//     const diffDays = Math.max(1, Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1);
-//     const prevEnd = new Date(start); prevEnd.setDate(prevEnd.getDate() - 1);
-//     const prevStart = new Date(prevEnd); prevStart.setDate(prevStart.getDate() - (diffDays - 1));
-//     const fmt = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-//     return { from: toISO(fmt(prevStart)), to: toISO(fmt(prevEnd), true), search: "" };
-//   };
-
-//   // load data
-//   const load = async () => {
-//     try {
-//       setError(null);
-//       setLoading(true);
-//       const params = buildParams();
-//       const [curr, prev] = await Promise.all([fetchReports(params), fetchReports(buildPrevParams())]);
-//       setData(curr || {});
-//       setPrevData(prev || null);
-//     } catch (e) {
-//       console.error(e);
-//       setError("Não foi possível carregar os relatórios.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-//   useEffect(() => {
-//     startTransition(() => { load(); });
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [filters.mode, filters.date, filters.month, filters.startDate, filters.endDate, debouncedSearch]);
-
-//   // derived
-//   const ledgerBase = useMemo(() => {
-//     const arr = Array.isArray(data.ledger) ? data.ledger : [];
-//     return [...arr].sort((a, b) => new Date(a.date) - new Date(b.date) || a.type.localeCompare(b.type));
-//   }, [data.ledger]);
-//   const ledgerCompacted = useMemo(() => compactLedgerSales(ledgerBase), [ledgerBase]);
-
-//   const ledgerFiltered = useMemo(() => {
-//     const q = (debouncedSearch || "").trim().toLowerCase();
-//     if (!q) return ledgerCompacted;
-//     return ledgerCompacted.filter((l) => `${l.type} ${l.description} ${l.customerName} ${l.payment}`.toLowerCase().includes(q));
-//   }, [ledgerCompacted, debouncedSearch]);
-
-//   // sorting
-//   const [sort, setSort] = useState({ key: "date", dir: "asc" });
-//   const sorted = useMemo(() => {
-//     const arr = [...ledgerFiltered];
-//     const { key, dir } = sort;
-//     const mul = dir === "asc" ? 1 : -1;
-//     arr.sort((a, b) => {
-//       if (key === "date") return (new Date(a.date) - new Date(b.date)) * mul;
-//       if (key === "in" || key === "out" || key === "balance") return (Number(a[key] || 0) - Number(b[key] || 0)) * mul;
-//       return String(a[key] || "").localeCompare(String(b[key] || "")) * mul;
-//     });
-//     return arr;
-//   }, [ledgerFiltered, sort]);
-
-//   // recompute running balance in *current* order
-//   const ledgerView = useMemo(() => {
-//     let running = 0;
-//     return sorted.map((item) => {
-//       running += Number(item.in || 0) - Number(item.out || 0);
-//       return { ...item, balance: running };
-//     });
-//   }, [sorted]);
-
-//   // totals for current view
-//   const viewTotals = useMemo(() => {
-//     const tin = ledgerView.reduce((s, i) => s + Number(i.in || 0), 0);
-//     const tout = ledgerView.reduce((s, i) => s + Number(i.out || 0), 0);
-//     return { in: tin, out: tout, net: tin - tout };
-//   }, [ledgerView]);
-
-//   // KPIs & deltas vs previous period
-//   const totals = data.totals || { revenue: 0, expenses: 0, net: 0 };
-//   const prevTotals = (prevData?.totals) || { revenue: 0, expenses: 0, net: 0 };
-//   const pct = (curr, prev) => (prev === 0 ? (curr > 0 ? 100 : 0) : ((curr - prev) / Math.abs(prev)) * 100);
-//   const delta = {
-//     revenue: pct(totals.revenue, prevTotals.revenue),
-//     expenses: pct(totals.expenses, prevTotals.expenses),
-//     net: pct(totals.net, prevTotals.net),
-//   };
-
-//   // charts
-//   const daily = data.dailySales ?? [];
-//   const monthly = data.monthlySales ?? [];
-//   const dailyData = {
-//     labels: daily.map((d) => d.date),
-//     datasets: [
-//       { type: "line", label: "Vendas", data: daily.map((d) => d.total), borderColor: "rgb(59,130,246)", backgroundColor: "rgba(59,130,246,.15)", tension: 0.35, fill: true, pointRadius: 0, borderWidth: 2 },
-//       { type: "line", label: "Despesas (estim.)", data: daily.map((d) => d.expenses ?? 0), borderColor: "rgb(244,63,94)", backgroundColor: "rgba(244,63,94,.12)", tension: 0.35, fill: true, pointRadius: 0, borderWidth: 2 },
-//     ],
-//   };
-//   const dailyOptions = { responsive: true, maintainAspectRatio: false, interaction: { mode: "index", intersect: false }, plugins: { legend: { position: "top" }, tooltip: { mode: "index", intersect: false } }, scales: { y: { beginAtZero: true } } };
-
-//   const monthlyData = {
-//     labels: monthly.map((m) => m.month),
-//     datasets: [{ type: "bar", label: "Vendas Mensais", data: monthly.map((m) => m.total), backgroundColor: "rgba(16,185,129,.6)", borderColor: "rgb(16,185,129)", borderWidth: 1 }],
-//   };
-//   const monthlyOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "top" } }, scales: { y: { beginAtZero: true }, x: { ticks: { autoSkip: true, maxRotation: 0 } } } };
-
-//   // payments split
-//   const paymentMap = useMemo(() => {
-//     const map = new Map();
-//     for (const r of ledgerCompacted) {
-//       if (Number(r.in || 0) <= 0) continue;
-//       const key = (r.payment || "—").split("|")[0]?.trim();
-//       map.set(key, (map.get(key) || 0) + Number(r.in || 0));
-//     }
-//     return map;
-//   }, [ledgerCompacted]);
-//   const paymentLabels = Array.from(paymentMap.keys());
-//   const paymentValues = paymentLabels.map((k) => paymentMap.get(k));
-//   const paymentData = { labels: paymentLabels, datasets: [{ label: "Formas de pagamento", data: paymentValues, backgroundColor: ["#60a5fa", "#f97316", "#34d399", "#f43f5e", "#a78bfa", "#14b8a6", "#f59e0b"] }] };
-//   const paymentOptions = { plugins: { legend: { position: "bottom" } }, maintainAspectRatio: false, responsive: true, cutout: "65%" };
-
-//   // leaderboard (top 7)
-//   const topCustomers = useMemo(() => {
-//     const map = new Map();
-//     for (const r of ledgerCompacted) {
-//       if (Number(r.in || 0) <= 0) continue;
-//       const key = r.customerName || "—";
-//       map.set(key, (map.get(key) || 0) + Number(r.in || 0));
-//     }
-//     return Array.from(map.entries())
-//       .map(([name, total]) => ({ name, total }))
-//       .sort((a, b) => b.total - a.total)
-//       .slice(0, 7);
-//   }, [ledgerCompacted]);
-
-//   // pagination
-//   const [pageSize, setPageSize] = useState(20);
-//   const [page, setPage] = useState(1);
-//   useEffect(() => setPage(1), [ledgerView, pageSize, sort]);
-//   const totalItems = ledgerView.length;
-//   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-//   const safePage = Math.min(Math.max(1, page), totalPages);
-//   const startIdx = (safePage - 1) * pageSize;
-//   const endIdx = Math.min(startIdx + pageSize, totalItems);
-//   const rows = ledgerView.slice(startIdx, endIdx);
-
-//   // toolbar helpers
-//   const [openDate, setOpenDate] = useState(false);
-//   const dateBtnRef = useRef(null);
-//   useEffect(() => {
-//     const h = (e) => { if (!dateBtnRef.current?.parentElement?.contains(e.target)) setOpenDate(false); };
-//     document.addEventListener("click", h);
-//     return () => document.removeEventListener("click", h);
-//   }, []);
-
-//   const setPreset = (key) => {
-//     if (key === "today") return setFilters((f) => ({ ...f, mode: "day", date: today() }));
-//     if (key === "thisMonth") return setFilters((f) => ({ ...f, mode: "month", month: thisMonth() }));
-//     if (key === "7d") {
-//       const r = lastNDays(7);
-//       return setFilters((f) => ({ ...f, mode: "range", startDate: r.start, endDate: r.end }));
-//     }
-//     if (key === "30d") {
-//       const r = lastNDays(30);
-//       return setFilters((f) => ({ ...f, mode: "range", startDate: r.start, endDate: r.end }));
-//     }
-//   };
-
-//   // export CSV
-//   const exportCsv = () => {
-//     setExporting(true);
-//     try {
-//       const headers = ["Data", "Tipo", "Descrição", "Cliente", "Pagamento", "Entrada", "Saída", "Saldo"];
-//       const csvRows = [headers.join(";")];
-//       ledgerView.forEach((r) => {
-//         csvRows.push([
-//           `"${r.date ? formatDate(r.date) : ""}"`,
-//           `"${r.type}"`,
-//           `"${(r.description || "").replaceAll('"', '""')}"`,
-//           `"${(r.customerName || "").replaceAll('"', '""')}"`,
-//           `"${(r.payment || "").replaceAll('"', '""')}"`,
-//           String(r.in ?? 0).replace(".", ","),
-//           String(r.out ?? 0).replace(".", ","),
-//           String(r.balance ?? 0).replace(".", ","),
-//         ].join(";"));
-//       });
-//       const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
-//       const url = URL.createObjectURL(blob);
-//       const a = document.createElement("a");
-//       const label = filters.mode === "day" ? filters.date : filters.mode === "month" ? filters.month : `${filters.startDate}_a_${filters.endDate}`;
-//       a.href = url; a.download = `dashboard_financeiro_${label}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-//     } finally { setExporting(false); }
-//   };
-
-//   // keyboard search focus
-//   const searchRef = useRef(null);
-//   useEffect(() => {
-//     const onKey = (e) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "g") { e.preventDefault(); searchRef.current?.focus(); } };
-//     window.addEventListener("keydown", onKey);
-//     return () => window.removeEventListener("keydown", onKey);
-//   }, []);
-
-//   // loading
-//   if (loading) {
-//     return (
-//       <div className="p-6">
-//         <div className="mb-6">
-//           <div className="h-8 w-48 rounded bg-gray-200 animate-pulse" />
-//           <div className="mt-2 h-4 w-64 rounded bg-gray-100 animate-pulse" />
-//         </div>
-//         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-//           {[...Array(3)].map((_, i) => <div key={i} className="h-28 rounded-xl bg-gray-100 animate-pulse" />)}
-//         </div>
-//         <div className="mt-6 grid grid-cols-1 xl:grid-cols-3 gap-6">
-//           {[...Array(3)].map((_, i) => <div key={i} className="h-80 rounded-xl bg-gray-100 animate-pulse" />)}
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   // header
-//   return (
-//     <div className="p-6 space-y-6">
-//       {/* Hero */}
-//       <div className="rounded-3xl bg-gradient-to-br from-gray-900 to-gray-700 text-white p-6 shadow-lg">
-//         <div className="flex items-center justify-between gap-4 flex-wrap">
-//           <div className="flex items-center gap-3">
-//             <SparklesIcon className="h-7 w-7 text-yellow-300" />
-//             <div>
-//               <h1 className="text-xl font-semibold">Dashboard Financeiro Pro</h1>
-//               <p className="text-sm text-white/70">Visão completa de vendas, despesas e fluxo de caixa</p>
-//             </div>
-//           </div>
-
-//           {/* Toolbar */}
-//           <div className="flex items-center gap-2 flex-wrap">
-//             <div className="relative">
-//               <button
-//                 ref={dateBtnRef}
-//                 type="button"
-//                 onClick={() => setOpenDate((v) => !v)}
-//                 className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-sm text-white ring-1 ring-white/20 hover:bg-white/15"
-//               >
-//                 <CalendarDaysIcon className="h-5 w-5" />
-//                 <span>{periodLabel}</span>
-//               </button>
-//               {openDate && (
-//                 <div className="absolute right-0 z-10 mt-2 w-80 rounded-2xl border border-white/20 bg-white/95 text-gray-900 shadow-2xl backdrop-blur">
-//                   <div className="p-3">
-//                     <div className="text-xs font-semibold text-gray-600 px-1 pb-2">Rápido</div>
-//                     <div className="grid grid-cols-2 gap-2">
-//                       {[
-//                         { k: "today", l: "Hoje" },
-//                         { k: "thisMonth", l: "Mês atual" },
-//                         { k: "7d", l: "Últimos 7 dias" },
-//                         { k: "30d", l: "Últimos 30 dias" },
-//                       ].map((q) => (
-//                         <button key={q.k} onClick={() => { setPreset(q.k); setOpenDate(false); }} className="rounded-lg border px-2 py-2 text-left text-sm hover:bg-gray-50">{q.l}</button>
-//                       ))}
-//                     </div>
-//                     <div className="my-3 h-px bg-gray-100" />
-//                     <div className="grid grid-cols-2 gap-2">
-//                       <div>
-//                         <div className="text-xs font-semibold text-gray-600 px-1">Início</div>
-//                         <input type="date" value={filters.mode === "day" ? filters.date : filters.startDate} onChange={(e) => setFilters((f) => ({ ...f, mode: "range", startDate: e.target.value }))} className="w-full h-10 px-3 border rounded-lg text-sm border-gray-200" />
-//                       </div>
-//                       <div>
-//                         <div className="text-xs font-semibold text-gray-600 px-1">Fim</div>
-//                         <input type="date" value={filters.mode === "day" ? filters.date : filters.endDate} onChange={(e) => setFilters((f) => ({ ...f, mode: "range", endDate: e.target.value }))} className="w-full h-10 px-3 border rounded-lg text-sm border-gray-200" />
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
-//               )}
-//             </div>
-
-//             {filters.mode === "day" && (
-//               <div className="inline-flex rounded-xl overflow-hidden ring-1 ring-white/20">
-//                 <button onClick={() => setFilters((f) => ({ ...f, date: shiftDate(f.date, -1) }))} className="px-2 py-2 text-white/80 hover:bg-white/10"><ChevronLeftIcon className="h-4 w-4" /></button>
-//                 <button onClick={() => setFilters((f) => ({ ...f, date: today() }))} className="px-3 py-2 text-sm hover:bg-white/10">Hoje</button>
-//                 <button onClick={() => setFilters((f) => ({ ...f, date: shiftDate(f.date, +1) }))} className="px-2 py-2 text-white/80 hover:bg-white/10"><ChevronRightIcon className="h-4 w-4" /></button>
-//               </div>
-//             )}
-
-//             <div className="relative">
-//               <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60" />
-//               <input
-//                 ref={searchRef}
-//                 type="text"
-//                 placeholder="Buscar (Ctrl/Cmd + G)"
-//                 className="w-72 rounded-xl bg-white/10 pl-9 pr-9 py-2 text-sm text-white placeholder:text-white/60 ring-1 ring-white/20 focus:outline-none focus:ring-white/30"
-//                 value={filters.search}
-//                 onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
-//               />
-//               {filters.search && (
-//                 <button onClick={() => setFilters((f) => ({ ...f, search: "" }))} className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-white/80 hover:bg-white/10" aria-label="Limpar busca">
-//                   <XMarkIcon className="h-4 w-4" />
-//                 </button>
-//               )}
-//             </div>
-
-//             <button onClick={load} className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-sm text-white ring-1 ring-white/20 hover:bg-white/15">
-//               <ArrowPathIcon className={`h-5 w-5 ${isPending ? "animate-spin" : ""}`} />
-//               Atualizar
-//             </button>
-
-//             <button onClick={exportCsv} disabled={exporting || totalItems === 0} className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-3 py-2 text-sm text-white hover:bg-emerald-600 disabled:opacity-60">
-//               <ArrowDownTrayIcon className="h-5 w-5" />
-//               Exportar CSV
-//             </button>
-
-//             <button
-//               onClick={() => {
-//                 localStorage.setItem("proReportsBookmark", JSON.stringify(filters));
-//               }}
-//               className="inline-flex items-center gap-1 rounded-xl bg-white/10 px-3 py-2 text-sm text-white ring-1 ring-white/20 hover:bg-white/15"
-//               title="Salvar esta visão"
-//             >
-//               <BookmarkIcon className="h-5 w-5" />
-//               Salvar visão
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {error && <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
-
-//       {/* KPIs */}
-//       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-//         {[
-//           { key: "revenue", title: "Vendas no período", icon: ChartBarIcon, value: totals.revenue, delta: delta.revenue, series: (data.dailySales ?? []).map((d) => d.total).slice(-14) },
-//           { key: "expenses", title: "Despesas no período", icon: ListBulletIcon, value: totals.expenses, delta: delta.expenses, series: (data.dailySales ?? []).map((d) => d.expenses ?? 0).slice(-14) },
-//           { key: "net", title: "Saldo (Vendas - Despesas)", icon: ChartPieIcon, value: totals.net, delta: delta.net, series: (data.dailySales ?? []).map((d) => (d.total - (d.expenses ?? 0))).slice(-14) },
-//         ].map((k) => (
-//           <div key={k.key} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm flex items-center justify-between">
-//             <div>
-//               <div className="flex items-center gap-2 text-xs text-gray-500">
-//                 <k.icon className="h-4 w-4 text-gray-400" /> {periodLabel}
-//               </div>
-//               <div className="mt-1 text-sm font-medium text-gray-600">{k.title}</div>
-//               <div className={`mt-1 text-2xl font-semibold ${k.key === "expenses" ? "text-red-600" : k.key === "net" && k.value >= 0 ? "text-emerald-700" : "text-gray-900"}`}>
-//                 {formatCurrency(k.value)}
-//               </div>
-//               <div className="mt-1"><Delta value={k.delta} /></div>
-//             </div>
-//             <Sparkline points={k.series} />
-//           </div>
-//         ))}
-//       </div>
-
-//       {/* Charts row */}
-//       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-//         <Panel title="Vendas x Despesas (diário)" action={<span className="text-xs text-gray-500">Interaja para detalhes</span>} className="xl:col-span-2">
-//           <div className="h-80">
-//             <Line data={dailyData} options={dailyOptions} />
-//           </div>
-//         </Panel>
-
-//         <Panel title="Formas de Pagamento" className="xl:col-span-1" action={<span className="text-xs text-gray-500">{paymentLabels.length} tipos</span>}>
-//           <div className="h-80"><Doughnut data={paymentData} options={paymentOptions} /></div>
-//         </Panel>
-//       </div>
-
-//       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-//         <Panel title="Vendas por mês" className="xl:col-span-2">
-//           <div className="h-80">
-//             <Bar data={monthlyData} options={monthlyOptions} />
-//           </div>
-//         </Panel>
-
-//         <Panel title="Top Clientes" action={<span className="text-xs text-gray-500">Top {topCustomers.length}</span>}>
-//           <ul className="space-y-3">
-//             {topCustomers.length ? topCustomers.map((c, i) => (
-//               <li key={c.name} className="flex items-center justify-between rounded-xl border p-3 hover:bg-gray-50">
-//                 <div className="flex items-center gap-3">
-//                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold">{i + 1}</span>
-//                   <span className="font-medium">{c.name}</span>
-//                 </div>
-//                 <span className="text-sm text-gray-700">{formatCurrency(c.total)}</span>
-//               </li>
-//             )) : <li className="text-sm text-gray-500">Sem dados.</li>}
-//           </ul>
-//         </Panel>
-//       </div>
-
-//       {/* Table */}
-//       <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-//         <div className="flex items-start justify-between border-b px-5 py-3">
-//           <div>
-//             <h3 className="text-sm font-semibold text-gray-900">Fluxo de caixa (lançamentos)</h3>
-//             <p className="text-xs text-gray-500">Entradas, saídas e saldo corrido — ordenação afeta o saldo.</p>
-//           </div>
-//           <div className="text-right text-sm text-gray-700">
-//             <span className="mr-3">Entrada: <strong>{formatCurrency(viewTotals.in)}</strong></span>
-//             <span className="mr-3">Saída: <strong className="text-red-600">{formatCurrency(viewTotals.out)}</strong></span>
-//             <span>Saldo: <strong className={viewTotals.net < 0 ? "text-red-600" : "text-gray-900"}>{formatCurrency(viewTotals.net)}</strong></span>
-//             <div className="text-xs text-gray-500 mt-1">Exibindo {totalItems === 0 ? 0 : startIdx + 1}–{endIdx} de {totalItems}</div>
-//           </div>
-//         </div>
-
-//         <div className="overflow-x-auto max-h-[60vh]">
-//           <table className="min-w-full divide-y divide-gray-200">
-//             <thead className="bg-gray-50 sticky top-0 z-10">
-//               <tr>
-//                 {[
-//                   { key: "date", label: "Data" },
-//                   { key: "type", label: "Tipo" },
-//                   { key: "description", label: "Descrição" },
-//                   { key: "customerName", label: "Cliente" },
-//                   { key: "payment", label: "Pagamento" },
-//                   { key: "in", label: "Entrada", align: "right" },
-//                   { key: "out", label: "Saída", align: "right" },
-//                   { key: "balance", label: "Saldo", align: "right" },
-//                   { key: "actions", label: "Ações", align: "center", sortable: false },
-//                 ].map((col) => (
-//                   <th key={col.key} className={`px-6 py-3 text-xs font-medium uppercase tracking-wider text-gray-500 ${col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left"}`}>
-//                     <button
-//                       disabled={col.sortable === false}
-//                       onClick={() => setSort((s) => ({ key: col.key, dir: s.key === col.key && s.dir === "asc" ? "desc" : "asc" }))}
-//                       className={`inline-flex items-center gap-1 ${col.sortable === false ? "cursor-default" : "hover:text-gray-700"}`}
-//                     >
-//                       {col.label}
-//                       {sort.key === col.key && <span className="text-[10px]">{sort.dir === "asc" ? "▲" : "▼"}</span>}
-//                     </button>
-//                   </th>
-//                 ))}
-//               </tr>
-//             </thead>
-//             <tbody className="divide-y divide-gray-200 bg-white">
-//               {rows.length ? rows.map((r) => {
-//                 const isSaleType = ((r.type || "").toLowerCase() === "sale" || (r.type || "").toLowerCase() === "venda");
-//                 const resolvedId = isSaleType ? resolveViewId(r) : null;
-//                 return (
-//                   <tr key={r.id || `${r.type}-${r.date}-${r.description}`} className="hover:bg-gray-50">
-//                     <td className="px-6 py-3 text-sm whitespace-nowrap">{r.date ? formatDate(r.date) : "—"}</td>
-//                     <td className="px-6 py-3 text-sm font-medium">{r.type}</td>
-//                     <td className="px-6 py-3 text-sm">{r.description}</td>
-//                     <td className="px-6 py-3 text-sm">{r.customerName || "—"}</td>
-//                     <td className="px-6 py-3 text-sm text-gray-600">{r.payment || "—"}</td>
-//                     <td className="px-6 py-3 text-sm text-right text-emerald-700">{r.in ? formatCurrency(r.in) : "—"}</td>
-//                     <td className="px-6 py-3 text-sm text-right text-red-600">{r.out ? formatCurrency(r.out) : "—"}</td>
-//                     <td className={`px-6 py-3 text-sm text-right ${r.balance < 0 ? "text-red-600" : "text-gray-900"}`}>{formatCurrency(r.balance)}</td>
-//                     <td className="px-6 py-3 text-sm text-center">
-//                       {resolvedId ? (
-//                         <Link to={`/sales/view/${encodeURIComponent(resolvedId)}`} className="inline-flex p-1 text-gray-700 hover:text-gray-900" title="Ver detalhes da venda">
-//                           <EyeIcon className="h-5 w-5" />
-//                         </Link>
-//                       ) : <span className="text-gray-400">—</span>}
-//                     </td>
-//                   </tr>
-//                 );
-//               }) : (
-//                 <tr><td colSpan={9} className="px-6 py-12 text-center text-gray-500">Nenhum lançamento no período</td></tr>
-//               )}
-//             </tbody>
-//           </table>
-//         </div>
-
-//         {/* Footer */}
-//         <div className="flex flex-col gap-3 border-t bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-//           <div className="flex items-center gap-3">
-//             <span className="text-sm text-gray-600">Itens por página</span>
-//             <select className="rounded-md border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 shadow-sm" value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}>
-//               {[10, 20, 50, 100].map((n) => <option key={n} value={n}>{n}</option>)}
-//             </select>
-//           </div>
-//           <nav className="inline-flex items-center gap-1 select-none">
-//             <button onClick={() => setPage(1)} disabled={safePage === 1} className="px-3 py-1 rounded border text-sm disabled:opacity-50">«</button>
-//             <button onClick={() => setPage(Math.max(1, safePage - 1))} disabled={safePage === 1} className="px-3 py-1 rounded border text-sm disabled:opacity-50">Anterior</button>
-//             <span className="px-3 py-1 text-sm">Página {safePage} de {totalPages}</span>
-//             <button onClick={() => setPage(Math.min(totalPages, safePage + 1))} disabled={safePage === totalPages} className="px-3 py-1 rounded border text-sm disabled:opacity-50">Próxima</button>
-//             <button onClick={() => setPage(totalPages)} disabled={safePage === totalPages} className="px-3 py-1 rounded border text-sm disabled:opacity-50">»</button>
-//           </nav>
-//           <div className="text-sm text-gray-600">{totalItems > 0 ? <>Exibindo <strong>{startIdx + 1}</strong>–<strong>{endIdx}</strong> de <strong>{totalItems}</strong></> : "Nenhum registro"}</div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }

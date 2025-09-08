@@ -5,17 +5,30 @@ import { PrinterIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { formatCurrency } from "../utils/format";
 import { fetchQuoteById, convertQuoteToSale } from "../services/api";
 
+import logo from "../assets/img/logo.png";
+
 const BLANK_ROWS = 12;
 
 const StatusBadge = ({ status }) => {
   const key = (status || "").toLowerCase();
   const map = {
-    converted: { label: "Convertido", cls: "bg-blue-100 text-blue-700 border-blue-200" },
-    pending: { label: "Pendente", cls: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+    converted: {
+      label: "Convertido",
+      cls: "bg-blue-100 text-blue-700 border-blue-200",
+    },
+    pending: {
+      label: "Pendente",
+      cls: "bg-yellow-100 text-yellow-700 border-yellow-200",
+    },
   };
-  const found = map[key] || { label: status || "—", cls: "bg-gray-100 text-gray-700 border-gray-200" };
+  const found = map[key] || {
+    label: status || "—",
+    cls: "bg-gray-100 text-gray-700 border-gray-200",
+  };
   return (
-    <span className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium ${found.cls}`}>
+    <span
+      className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium ${found.cls}`}
+    >
       {found.label}
     </span>
   );
@@ -47,7 +60,11 @@ const ViewQuote = () => {
   };
 
   const handleConvertToSale = async () => {
-    if (window.confirm("Tem certeza que deseja converter este orçamento em venda?")) {
+    if (
+      window.confirm(
+        "Tem certeza que deseja converter este orçamento em venda?"
+      )
+    ) {
       try {
         await convertQuoteToSale(id);
         toast.success("Orçamento convertido em venda com sucesso!");
@@ -61,8 +78,18 @@ const ViewQuote = () => {
 
   const handlePrint = () => window.print();
 
-  if (isLoading) return <div className="flex h-64 items-center justify-center text-gray-600">Carregando...</div>;
-  if (!quote) return <div className="flex h-64 items-center justify-center text-gray-600">Orçamento não encontrado</div>;
+  if (isLoading)
+    return (
+      <div className="flex h-64 items-center justify-center text-gray-600">
+        Carregando...
+      </div>
+    );
+  if (!quote)
+    return (
+      <div className="flex h-64 items-center justify-center text-gray-600">
+        Orçamento não encontrado
+      </div>
+    );
 
   return (
     <div className="p-6">
@@ -117,15 +144,25 @@ const ViewQuote = () => {
       {/* === Header padrão + ações === */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between no-print">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Orçamento {quote.quoteNumber}</h1>
-          <p className="text-sm text-gray-500">Visualize, imprima ou converta em venda</p>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Orçamento {quote.quoteNumber}
+          </h1>
+          <p className="text-sm text-gray-500">
+            Visualize, imprima ou converta em venda
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={handlePrint} className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+          <button
+            onClick={handlePrint}
+            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+          >
             <PrinterIcon className="h-5 w-5" /> Imprimir
           </button>
           {(quote.status || "").toLowerCase() !== "converted" && (
-            <button onClick={handleConvertToSale} className="inline-flex items-center gap-2 rounded-md btn-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary">
+            <button
+              onClick={handleConvertToSale}
+              className="inline-flex items-center gap-2 rounded-md btn-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary"
+            >
               <ShoppingCartIcon className="h-5 w-5" /> Converter em Venda
             </button>
           )}
@@ -141,19 +178,31 @@ const ViewQuote = () => {
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-600">Total</p>
-            <p className="text-2xl font-bold text-gray-900">{formatCurrency(quote.total)}</p>
-            <div className="mt-1"><StatusBadge status={(quote.status || "").toLowerCase()} /></div>
+            <p className="text-2xl font-bold text-gray-900">
+              {formatCurrency(quote.total)}
+            </p>
+            <div className="mt-1">
+              <StatusBadge status={(quote.status || "").toLowerCase()} />
+            </div>
           </div>
         </div>
 
         <div className="grid gap-6 px-6 py-6 sm:grid-cols-2">
           <div>
-            <p className="text-xs uppercase tracking-wide text-gray-500">Cliente</p>
-            <p className="text-sm font-medium text-gray-900">{quote.customerName || "Cliente não informado"}</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500">
+              Cliente
+            </p>
+            <p className="text-sm font-medium text-gray-900">
+              {quote.customerName || "Cliente não informado"}
+            </p>
           </div>
           <div className="sm:text-right">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Data</p>
-            <p className="text-sm font-medium text-gray-900">{new Date(quote.date).toLocaleDateString("pt-BR")}</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500">
+              Data
+            </p>
+            <p className="text-sm font-medium text-gray-900">
+              {new Date(quote.date).toLocaleDateString("pt-BR")}
+            </p>
           </div>
         </div>
 
@@ -163,21 +212,41 @@ const ViewQuote = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Produto</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Marca</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Qtd</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Preço Unit.</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Total</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Produto
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Marca
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Qtd
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Preço Unit.
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Total
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
                 {quote.items.map((item, idx) => (
                   <tr key={idx} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900">{item.name}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{item.brand}</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{item.quantity}</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{formatCurrency(item.price)}</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{formatCurrency(item.total)}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {item.name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {item.brand}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                      {item.quantity}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                      {formatCurrency(item.price)}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                      {formatCurrency(item.total)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -187,7 +256,9 @@ const ViewQuote = () => {
 
         {quote.notes && (
           <div className="border-t px-6 py-6">
-            <h3 className="mb-2 text-sm font-medium text-gray-700">Observações</h3>
+            <h3 className="mb-2 text-sm font-medium text-gray-700">
+              Observações
+            </h3>
             <p className="text-sm text-gray-900">{quote.notes}</p>
           </div>
         )}
@@ -197,53 +268,121 @@ const ViewQuote = () => {
       <div id="fg-print">
         <div className="sheet">
           <div className="empresa">
-            <div className="hdr">
-              <div className="brand">
-                <div className="logo">LOGO</div>
-                <div>
-                  <h1>FG FILMS</h1>
-                  <div className="sub">acessórios automotivos</div>
-                </div>
-              </div>
-              <div className="orc">
-                <div className="t">ORÇAMENTO</div>
-                <div className="n">{quote.quoteNumber}</div>
-              </div>
-            </div>
+           <div className="hdr">
+  <div className="brand" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+    <img
+      src={logo}
+      alt="Logo"
+      style={{ maxWidth: "220px", height: "auto", objectFit: "contain", marginBottom: "-40px",  marginTop: "-10px" }}
+    />
+  </div>
+
+  <div className="orc">
+    <div className="t">ORÇAMENTO</div>
+    <div className="n">{quote.quoteNumber}</div>
+  </div>
+</div>
+
             <div className="row">
               <div style={{ fontWeight: 700 }}>CNPJ: 14.864.222/0001-67</div>
             </div>
-            <div className="svc">PELÍCULA · SUPER LED · SOM · AMPLIFICADORES · ALARMES · TRAVAS · MÓDULOS</div>
-            <div className="mt4">Tel.: (91) 98241-6768 · <span>fer_maia2005@hotmail.com</span></div>
-            <div className="mt4 addr">RUA QUINZE DE AGOSTO, 552, CRUZEIRO / ICOARACI</div>
+            <div className="svc">
+              PELÍCULA · SUPER LED · SOM · AMPLIFICADORES · ALARMES · TRAVAS ·
+              MÓDULOS
+            </div>
+            <div className="mt4">
+              Tel.: (91) 98241-6768 · <span>fer_maia2005@hotmail.com</span>
+            </div>
+            <div className="mt4 addr">
+              RUA QUINZE DE AGOSTO, 552, CRUZEIRO / ICOARACI
+            </div>
           </div>
 
           <div className="dados">
             <div className="dln">
-              <div className="field"><label>Nome</label><div className="line">{quote.customerName || ""}</div></div>
-              <div className="field"><label>Tel.</label><div className="line">{quote.customerPhone || ""}</div></div>
-              <div className="field"><label></label><div></div></div>
-              <div className="field"><label></label><div></div></div>
+              <div className="field">
+                <label>Nome</label>
+                <div className="line">{quote.customerName || ""}</div>
+              </div>
+              <div className="field">
+                <label>Tel.</label>
+                <div className="line">{quote.customerPhone || ""}</div>
+              </div>
+              <div className="field">
+                <label></label>
+                <div></div>
+              </div>
+              <div className="field">
+                <label></label>
+                <div></div>
+              </div>
             </div>
             <div className="dln dln-2">
-              <div className="field"><label>End.</label><div className="line">{quote.address || ""}</div></div>
-              <div className="field"><label>Cidade</label><div className="line">{quote.city || ""}</div></div>
-              <div className="field"><label>UF</label><div className="line">{quote.uf || ""}</div></div>
+              <div className="field">
+                <label>End.</label>
+                <div className="line">{quote.address || ""}</div>
+              </div>
+              <div className="field">
+                <label>Cidade</label>
+                <div className="line">{quote.city || ""}</div>
+              </div>
+              <div className="field">
+                <label>UF</label>
+                <div className="line">{quote.uf || ""}</div>
+              </div>
             </div>
             <div className="dln dln-3">
-              <div className="field"><label>Bairro</label><div className="line">{quote.neighborhood || ""}</div></div>
-              <div className="field"><label>CPF/CNPJ</label><div className="line">{quote.cpfCnpj || ""}</div></div>
-              <div className="field"><label>INSC. EST.</label><div className="line">{quote.stateRegistration || ""}</div></div>
+              <div className="field">
+                <label>Bairro</label>
+                <div className="line">{quote.neighborhood || ""}</div>
+              </div>
+              <div className="field">
+                <label>CPF/CNPJ</label>
+                <div className="line">{quote.cpfCnpj || ""}</div>
+              </div>
+              <div className="field">
+                <label>INSC. EST.</label>
+                <div className="line">{quote.stateRegistration || ""}</div>
+              </div>
             </div>
             <div className="dln dln-4">
-              <div className="field"><label>COND. PAGAMENTO</label><div className="line">{quote.paymentTerms || ""}</div></div>
-              <div className="field"><label>PRAZO ENTREGA</label><div className="line">{quote.deliveryTime || ""}</div></div>
-              <div className="field"><label>VALIDADE</label><div className="line">{quote.validityDate || ""}</div></div>
+              <div className="field">
+                <label>COND. PAGAMENTO</label>
+                <div className="line">{quote.paymentTerms || ""}</div>
+              </div>
+              <div className="field">
+                <label>PRAZO ENTREGA</label>
+                <div className="line">{quote.deliveryTime || ""}</div>
+              </div>
+              <div className="field">
+                <label>VALIDADE</label>
+                <div className="line">{quote.validityDate || ""}</div>
+              </div>
             </div>
           </div>
 
           <div style={{ position: "relative" }}>
-            <div className="wm">FG FILMS<small>acessórios automotivos</small></div>
+            <div
+              style={{
+                position: "absolute",
+                left: 150,
+                right: 0,
+                margin: "auto",
+                top: "92mm",
+                width: "70%",
+                textAlign: "center",
+                pointerEvents: "none",
+                userSelect: "none",
+                top: 70,
+              }}
+            >
+              <img
+                src={logo}
+                alt="Marca d’água"
+                style={{ width: "60%", opacity: 0.06 }}
+              />
+            </div>
+
             <table className="itens">
               <thead>
                 <tr>
@@ -257,13 +396,22 @@ const ViewQuote = () => {
                 {quote.items.map((item, i) => (
                   <tr key={i}>
                     <td className="col-q">{item.quantity}</td>
-                    <td>{`${item.name}${item.brand ? " - " + item.brand : ""}`}</td>
+                    <td>{`${item.name}${
+                      item.brand ? " - " + item.brand : ""
+                    }`}</td>
                     <td className="col-vu">{formatCurrency(item.price)}</td>
                     <td className="col-t">{formatCurrency(item.total)}</td>
                   </tr>
                 ))}
-                {Array.from({ length: Math.max(BLANK_ROWS - quote.items.length, 0) }).map((_, i) => (
-                  <tr key={`blank-${i}`}><td></td><td></td><td></td><td></td></tr>
+                {Array.from({
+                  length: Math.max(BLANK_ROWS - quote.items.length, 0),
+                }).map((_, i) => (
+                  <tr key={`blank-${i}`}>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -278,21 +426,28 @@ const ViewQuote = () => {
 
           <div className="foot">
             <div className="valid">
-              Apresente este orçamento até a data de validade. Após, será realizado um novo orçamento.
-              <div className="mt4 xsmall">Data: {new Date(quote.date).toLocaleDateString("pt-BR")}</div>
-              <div className="xsmall">Cliente: {quote.customerName || "Não informado"}</div>
+              Apresente este orçamento até a data de validade. Após, será
+              realizado um novo orçamento.
+              <div className="mt4 xsmall">
+                Data: {new Date(quote.date).toLocaleDateString("pt-BR")}
+              </div>
+              <div className="xsmall">
+                Cliente: {quote.customerName || "Não informado"}
+              </div>
             </div>
-            <div className="total">TOTAL R$ {formatCurrency(quote.total).replace("R$ ", "")}</div>
+            <div className="total">
+              TOTAL R$ {formatCurrency(quote.total).replace("R$ ", "")}
+            </div>
           </div>
 
           <div className="sign">
             <div>
               <div className="uline"></div>
-              <div className="siglbl">DATA</div>
+              <div className="siglbl">ASSINATURA</div>
             </div>
             <div>
               <div className="uline"></div>
-              <div className="siglbl">ASSINATURA ATENDENTE</div>
+              <div className="siglbl">DATA</div>
             </div>
           </div>
         </div>

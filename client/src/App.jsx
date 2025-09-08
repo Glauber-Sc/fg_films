@@ -9,6 +9,7 @@ import Sidebar from "./components/Sidebar";
 
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
+import ViewProduct from "./pages/ViewProduct";
 import AddProduct from "./pages/AddProduct";
 import EditProduct from "./pages/EditProduct";
 import Sales from "./pages/Sales";
@@ -32,6 +33,7 @@ import EditExpense from "./pages/EditExpense";
 import Services from "./pages/Services";
 import AddService from "./pages/AddService";
 import EditService from "./pages/EditService";
+import ViewService from "./pages/ViewService";
 
 function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -55,6 +57,7 @@ function Layout() {
             <Route path="/products" element={<Products />} />
             <Route path="/products/add" element={<AddProduct />} />
             <Route path="/products/edit/:id" element={<EditProduct />} />
+            <Route path="/products/view/:id" element={<ViewProduct />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/sales/new" element={<NewSale />} />
             <Route path="/sales/view/:id" element={<ViewSale />} />
@@ -76,6 +79,7 @@ function Layout() {
             <Route path="/services" element={<Services />} />
             <Route path="/services/add" element={<AddService />} />
             <Route path="/services/edit/:id" element={<EditService />} />
+            <Route path="/services/view/:id" element={<ViewService />} />
           </Routes>
         </div>
       </div>

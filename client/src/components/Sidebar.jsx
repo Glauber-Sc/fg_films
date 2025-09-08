@@ -6,14 +6,15 @@ import {
   ShoppingCart,
   ClipboardList,
   BarChart,
-  ShoppingBag,
   Users,
   Building,
   FileText,
   ChevronLeft,
   ChevronRight,
   LogOut,
-  Wrench
+  Wrench,
+  Computer,
+  FileChartLine
 } from "lucide-react";
 
 import logo from "../assets/img/logo.png";
@@ -39,7 +40,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       {
         title: "Operação",
         items: [
-          { name: "PDV", path: "/pdv", icon: ShoppingBag },
+          { name: "PDV", path: "/pdv", icon: Computer },
           { name: "Vendas", path: "/sales", icon: ShoppingCart },
           { name: "Serviços", path: "/services", icon: Wrench },
           { name: "Orçamentos", path: "/quotes", icon: FileText },
@@ -57,7 +58,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       {
         title: "Gestão",
         items: [
-          { name: "Despesas", path: "/expenses", icon: FileText },
+          { name: "Despesas", path: "/expenses", icon: FileChartLine },
           { name: "Relatórios", path: "/reports", icon: BarChart },
         ],
       },

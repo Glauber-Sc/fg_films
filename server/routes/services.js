@@ -44,6 +44,20 @@ function ensureLocalMidday(dateStr) {
   return dateStr;
 }
 
+/** Sanitiza lista de pagamentos mantendo compatibilidade de campos */
+function sanitizePayments(list) {
+  if (!Array.isArray(list)) return [];
+  return list
+    .map((p) => ({
+      method: String(p.method ?? p.metodo ?? "Dinheiro"),
+      amount: Number(p.amount ?? p.valor ?? p.value ?? 0),
+      machine: String(p.machine ?? p.maquina ?? ""),
+      installments: String(p.installments ?? p.parcelas ?? ""),
+    }))
+    .filter((p) => Number.isFinite(p.amount) && p.amount > 0);
+}
+const sumPayments = (arr) => sanitizePayments(arr).reduce((a, b) => a + (b.amount || 0), 0);
+
 // GET - Listar
 router.get("/", (req, res) => {
   try {
@@ -69,7 +83,7 @@ router.get("/:id", (req, res) => {
 // POST - Criar
 router.post("/", (req, res) => {
   try {
-    const { date, description, employee, value } = req.body;
+    const { date, description, employee, value, paymentMethods, payments, payment } = req.body;
     if (!date || !description || !employee || value == null) {
       return res.status(400).json({ error: "Data, descrição, funcionário e valor são obrigatórios" });
     }
@@ -84,18 +98,29 @@ router.post("/", (req, res) => {
       createdAt: new Date().toISOString(),
     };
 
+    // ⬇️ salva pagamentos, se enviados já na criação
+    const pmList = sanitizePayments(paymentMethods ?? payments);
+    if (pmList.length) {
+      newService.paymentMethods = pmList;
+      newService.paidTotal = Number(sumPayments(pmList).toFixed(2));
+      newService.paidAt = new Date().toISOString();
+    } else if (typeof payment === "string" && payment.trim()) {
+      // permite um resumo textual legado
+      newService.payment = payment.trim();
+    }
+
     services.push(newService);
     writeServices(services);
     res.status(201).json(newService);
-  } catch {
+  } catch (e) {
     res.status(500).json({ error: "Erro ao criar serviço" });
   }
 });
 
-// PUT - Atualizar
+// PUT - Atualizar dados do serviço (não apaga pagamentos existentes se não vierem no body)
 router.put("/:id", (req, res) => {
   try {
-    const { date, description, employee, value } = req.body;
+    const { date, description, employee, value, paymentMethods, payments, payment } = req.body;
     if (!date || !description || !employee || value == null) {
       return res.status(400).json({ error: "Data, descrição, funcionário e valor são obrigatórios" });
     }
@@ -104,19 +129,68 @@ router.put("/:id", (req, res) => {
     const idx = services.findIndex((s) => s.id === parseInt(req.params.id, 10));
     if (idx === -1) return res.status(404).json({ error: "Serviço não encontrado" });
 
+    const svc = services[idx];
+    const pmInput = paymentMethods ?? payments;
+
     services[idx] = {
-      ...services[idx],
+      ...svc,
       date: ensureLocalMidday(String(date)),
       description: String(description),
       employee: String(employee),
       value: parseFloat(value),
       updatedAt: new Date().toISOString(),
+      ...(Array.isArray(pmInput)
+        ? (() => {
+            const pmList = sanitizePayments(pmInput);
+            if (pmList.length) {
+              return {
+                paymentMethods: pmList,
+                paidTotal: Number(sumPayments(pmList).toFixed(2)),
+                paidAt: new Date().toISOString(),
+                payment: undefined,
+              };
+            }
+            return {};
+          })()
+        : typeof payment === "string" && payment.trim()
+        ? { payment: payment.trim(), paymentMethods: undefined, paidTotal: undefined }
+        : {}),
     };
 
     writeServices(services);
     res.json(services[idx]);
   } catch {
     res.status(500).json({ error: "Erro ao atualizar serviço" });
+  }
+});
+
+// PATCH - Anexar/atualizar pagamentos de um serviço
+router.patch("/:id/payments", (req, res) => {
+  try {
+    const { paymentMethods, payments, payment } = req.body;
+
+    const services = readServices();
+    const idx = services.findIndex((s) => s.id === parseInt(req.params.id, 10));
+    if (idx === -1) return res.status(404).json({ error: "Serviço não encontrado" });
+
+    const pmList = sanitizePayments(paymentMethods ?? payments);
+
+    if (pmList.length) {
+      services[idx].paymentMethods = pmList;
+      services[idx].paidTotal = Number(sumPayments(pmList).toFixed(2));
+      services[idx].paidAt = new Date().toISOString();
+      delete services[idx].payment; // preferimos a lista detalhada
+    } else if (typeof payment === "string" && payment.trim()) {
+      services[idx].payment = payment.trim();
+      delete services[idx].paymentMethods;
+      delete services[idx].paidTotal;
+    }
+
+    services[idx].updatedAt = new Date().toISOString();
+    writeServices(services);
+    res.json(services[idx]);
+  } catch (e) {
+    res.status(500).json({ error: "Erro ao atualizar pagamentos do serviço" });
   }
 });
 

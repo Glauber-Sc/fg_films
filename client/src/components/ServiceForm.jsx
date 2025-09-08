@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 
 const toForm = (data) => ({
-  date: data?.date ? new Date(data.date).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
+  date: data?.date
+    ? new Date(data.date).toISOString().slice(0, 10)
+    : new Date().toISOString().slice(0, 10),
   description: data?.description ?? "",
   employee: data?.employee ?? "",
-  value: data?.value != null ? String(data.value).replace(".", ",") : "",
 });
 
-const ServiceForm = ({
+export default function ServiceForm({
   initialData = null,
   onSubmit,
   onCancel,
   buttonText = "Salvar",
   isSubmitting = false,
-}) => {
+}) {
   const [formData, setFormData] = useState(() => toForm(initialData));
   const [errors, setErrors] = useState({});
 
@@ -27,9 +28,6 @@ const ServiceForm = ({
     if (!formData.date) e.date = "Informe a data";
     if (!formData.description?.trim()) e.description = "Informe a descrição";
     if (!formData.employee?.trim()) e.employee = "Informe o funcionário";
-    const normalized = String(formData.value || "").replace(/\./g, "").replace(",", ".");
-    const num = Number.parseFloat(normalized);
-    if (!Number.isFinite(num) || num <= 0) e.value = "Informe um valor válido";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -42,12 +40,12 @@ const ServiceForm = ({
   const handleSubmit = (ev) => {
     ev.preventDefault();
     if (!validate()) return;
-    const normalized = String(formData.value).replace(/\./g, "").replace(",", ".");
+
     onSubmit?.({
       date: formData.date,
       description: formData.description.trim(),
       employee: formData.employee.trim(),
-      value: Number.parseFloat(normalized),
+      // OBS: valor e pagamentos ficaram em outra tela (AddService / fluxo próprio)
     });
   };
 
@@ -55,7 +53,9 @@ const ServiceForm = ({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
-          <label htmlFor="date" className="mb-1 block text-sm font-medium text-gray-700">Data *</label>
+          <label htmlFor="date" className="mb-1 block text-sm font-medium text-gray-700">
+            Data *
+          </label>
           <input
             id="date"
             name="date"
@@ -70,24 +70,28 @@ const ServiceForm = ({
         </div>
 
         <div>
-          <label htmlFor="value" className="mb-1 block text-sm font-medium text-gray-700">Valor (R$) *</label>
+          <label htmlFor="employee" className="mb-1 block text-sm font-medium text-gray-700">
+            Funcionário *
+          </label>
           <input
-            id="value"
-            name="value"
-            type="number"
-            inputMode="decimal"
-            placeholder="0,00"
-            value={formData.value}
+            id="employee"
+            name="employee"
+            type="text"
+            required
+            placeholder="Quem executou o serviço"
+            value={formData.employee}
             onChange={handleChange}
             className="w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/5"
-            aria-invalid={!!errors.value}
+            aria-invalid={!!errors.employee}
           />
-          {errors.value && <p className="mt-1 text-xs text-red-600">{errors.value}</p>}
+          {errors.employee && <p className="mt-1 text-xs text-red-600">{errors.employee}</p>}
         </div>
       </div>
 
       <div>
-        <label htmlFor="description" className="mb-1 block text-sm font-medium text-gray-700">Descrição *</label>
+        <label htmlFor="description" className="mb-1 block text-sm font-medium text-gray-700">
+          Descrição *
+        </label>
         <input
           id="description"
           name="description"
@@ -99,23 +103,9 @@ const ServiceForm = ({
           className="w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/5"
           aria-invalid={!!errors.description}
         />
-        {errors.description && <p className="mt-1 text-xs text-red-600">{errors.description}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="employee" className="mb-1 block text-sm font-medium text-gray-700">Funcionário *</label>
-        <input
-          id="employee"
-          name="employee"
-          type="text"
-          required
-          placeholder="Quem executou o serviço"
-          value={formData.employee}
-          onChange={handleChange}
-          className="w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900/5"
-          aria-invalid={!!errors.employee}
-        />
-        {errors.employee && <p className="mt-1 text-xs text-red-600">{errors.employee}</p>}
+        {errors.description && (
+          <p className="mt-1 text-xs text-red-600">{errors.description}</p>
+        )}
       </div>
 
       <div className="flex items-center justify-end gap-2">
@@ -138,6 +128,4 @@ const ServiceForm = ({
       </div>
     </form>
   );
-};
-
-export default ServiceForm;
+}
