@@ -1,8 +1,9 @@
 // src/constants/domains.js
 export const MACHINE_OPTIONS = [
-  { id: "machine_a", name: "Máquina A" },
-  { id: "machine_b", name: "Máquina B" },
-  { id: "machine_c", name: "Máquina C" },
+  { id: "machine_a", name: "pagBank" },
+  { id: "machine_b", name: "MercadoPago" },
+  { id: "machine_c", name: "Laranjinha" },
+  { id: "machine_d", name: "Stone" },
 ];
 
 export const PAYMENT_METHODS = [

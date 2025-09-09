@@ -1,116 +1,112 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { toast } from "react-toastify"
-import Card from "../components/Card"
-import { formatCurrency } from "../utils/format"
-import { fetchProducts, fetchCustomers, createSale } from "../services/api"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Card from "../components/Card";
+import { formatCurrency } from "../utils/format";
+import { fetchProducts, fetchCustomers, createSale } from "../services/api";
+
+// ⬇️ importe os constants (ajuste o caminho se necessário)
+import { MACHINE_OPTIONS, PAYMENT_METHODS } from "../constants/domainsPDV";
 
 const NewSale = () => {
-  const navigate = useNavigate()
-  const [products, setProducts] = useState([])
-  const [customers, setCustomers] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [selectedProduct, setSelectedProduct] = useState("")
-  const [selectedCustomer, setSelectedCustomer] = useState("")
-  const [quantity, setQuantity] = useState(1)
-  const [total, setTotal] = useState(0)
-  const [productDetails, setProductDetails] = useState(null)
-  const [paymentMethods, setPaymentMethods] = useState([])
-
-  // Payment machines
-  const cardMachines = [
-    { id: "machine_a", name: "Máquina A" },
-    { id: "machine_b", name: "Máquina B" },
-    { id: "machine_c", name: "Máquina C" },
-  ]
+  const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [productDetails, setProductDetails] = useState(null);
+  const [paymentMethods, setPaymentMethods] = useState([]);
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
   const loadData = async () => {
     try {
-      setIsLoading(true)
-      const [productsData, customersData] = await Promise.all([fetchProducts(), fetchCustomers()])
-      const availableProducts = productsData.filter((product) => product.stock > 0)
-      setProducts(availableProducts)
-      setCustomers(customersData)
+      setIsLoading(true);
+      const [productsData, customersData] = await Promise.all([fetchProducts(), fetchCustomers()]);
+      const availableProducts = productsData.filter((product) => product.stock > 0);
+      setProducts(availableProducts);
+      setCustomers(customersData);
     } catch (error) {
-      console.error("Error loading data:", error)
-      toast.error("Erro ao carregar dados")
+      console.error("Error loading data:", error);
+      toast.error("Erro ao carregar dados");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (selectedProduct) {
-      const product = products.find((p) => p.id === selectedProduct)
-      setProductDetails(product)
-      calculateTotal(product, quantity)
+      const product = products.find((p) => p.id === selectedProduct);
+      setProductDetails(product);
+      calculateTotal(product, quantity);
 
       // Initialize payment methods with full amount
       if (product) {
         setPaymentMethods([
           {
             id: Date.now(),
-            method: "Dinheiro",
+            method: PAYMENT_METHODS?.[0] ?? "Dinheiro",
             amount: product.price * quantity,
             machine: "",
           },
-        ])
+        ]);
       }
     } else {
-      setProductDetails(null)
-      setTotal(0)
-      setPaymentMethods([])
+      setProductDetails(null);
+      setTotal(0);
+      setPaymentMethods([]);
     }
-  }, [selectedProduct, products])
+  }, [selectedProduct, products]);
 
   useEffect(() => {
     if (productDetails) {
-      calculateTotal(productDetails, quantity)
+      calculateTotal(productDetails, quantity);
 
       // Update payment methods total
-      const newTotal = productDetails.price * quantity
+      const newTotal = productDetails.price * quantity;
       if (paymentMethods.length === 1) {
         setPaymentMethods([
           {
             ...paymentMethods[0],
             amount: newTotal,
           },
-        ])
+        ]);
       }
     }
-  }, [quantity, productDetails])
+  }, [quantity, productDetails]);
 
   const calculateTotal = (product, qty) => {
     if (product) {
-      setTotal(product.price * qty)
+      setTotal(product.price * qty);
     } else {
-      setTotal(0)
+      setTotal(0);
     }
-  }
+  };
 
   const addPaymentMethod = () => {
-    const currentTotal = paymentMethods.reduce((sum, pm) => sum + pm.amount, 0)
-    const remaining = total - currentTotal
+    const currentTotal = paymentMethods.reduce((sum, pm) => sum + pm.amount, 0);
+    const remaining = total - currentTotal;
 
     if (remaining <= 0) {
-      toast.warning("Valor total já foi coberto pelos métodos de pagamento")
-      return
+      toast.warning("Valor total já foi coberto pelos métodos de pagamento");
+      return;
     }
 
     setPaymentMethods([
       ...paymentMethods,
       {
         id: Date.now(),
-        method: "Dinheiro",
+        method: PAYMENT_METHODS?.[0] ?? "Dinheiro",
         amount: remaining,
         machine: "",
       },
-    ])
-  }
+    ]);
+  };
 
   const updatePaymentMethod = (id, field, value) => {
     setPaymentMethods(
@@ -119,65 +115,67 @@ const NewSale = () => {
           ? {
               ...pm,
               [field]: field === "amount" ? Number(value) || 0 : value,
-              ...(field === "method" && value !== "Cartão de Crédito" && value !== "Cartão de Débito"
+              ...(field === "method" &&
+                value !== "Cartão de Crédito" &&
+                value !== "Cartão de Débito"
                 ? { machine: "" }
                 : {}),
             }
           : pm,
       ),
-    )
-  }
+    );
+  };
 
   const removePaymentMethod = (id) => {
-    setPaymentMethods(paymentMethods.filter((pm) => pm.id !== id))
-  }
+    setPaymentMethods(paymentMethods.filter((pm) => pm.id !== id));
+  };
 
   const getTotalPayments = () => {
-    return paymentMethods.reduce((sum, pm) => sum + pm.amount, 0)
-  }
+    return paymentMethods.reduce((sum, pm) => sum + pm.amount, 0);
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!selectedProduct) {
-      toast.error("Selecione um produto")
-      return
+      toast.error("Selecione um produto");
+      return;
     }
 
     if (quantity <= 0) {
-      toast.error("A quantidade deve ser maior que zero")
-      return
+      toast.error("A quantidade deve ser maior que zero");
+      return;
     }
 
     if (productDetails && quantity > productDetails.stock) {
-      toast.error(`Quantidade indisponível. Estoque atual: ${productDetails.stock}`)
-      return
+      toast.error(`Quantidade indisponível. Estoque atual: ${productDetails.stock}`);
+      return;
     }
 
     if (paymentMethods.length === 0) {
-      toast.error("Adicione pelo menos um método de pagamento")
-      return
+      toast.error("Adicione pelo menos um método de pagamento");
+      return;
     }
 
-    const totalPayments = getTotalPayments()
+    const totalPayments = getTotalPayments();
     if (Math.abs(totalPayments - total) > 0.01) {
-      toast.error("O valor total dos pagamentos deve ser igual ao valor da venda")
-      return
+      toast.error("O valor total dos pagamentos deve ser igual ao valor da venda");
+      return;
     }
 
     // Validate card payments have machines selected
     const cardPayments = paymentMethods.filter(
       (pm) => pm.method === "Cartão de Crédito" || pm.method === "Cartão de Débito",
-    )
+    );
     if (cardPayments.some((pm) => !pm.machine)) {
-      toast.error("Selecione a máquina para todos os pagamentos com cartão")
-      return
+      toast.error("Selecione a máquina para todos os pagamentos com cartão");
+      return;
     }
 
     try {
       const customerName = selectedCustomer
         ? customers.find((c) => c.id === selectedCustomer)?.name || "Cliente não identificado"
-        : "Cliente não identificado"
+        : "Cliente não identificado";
 
       const saleData = {
         productId: selectedProduct,
@@ -189,16 +187,16 @@ const NewSale = () => {
         customerName: customerName,
         paymentMethods: paymentMethods,
         date: new Date().toISOString(),
-      }
+      };
 
-      await createSale(saleData)
-      toast.success("Venda registrada com sucesso")
-      navigate("/sales")
+      await createSale(saleData);
+      toast.success("Venda registrada com sucesso");
+      navigate("/sales");
     } catch (error) {
-      console.error("Error creating sale:", error)
-      toast.error("Erro ao registrar venda")
+      console.error("Error creating sale:", error);
+      toast.error("Erro ao registrar venda");
     }
-  }
+  };
 
   return (
     <div className="p-6">
@@ -318,11 +316,11 @@ const NewSale = () => {
                               onChange={(e) => updatePaymentMethod(payment.id, "method", e.target.value)}
                               className="input-field"
                             >
-                              <option value="Dinheiro">Dinheiro</option>
-                              <option value="PIX">PIX</option>
-                              <option value="Cartão de Crédito">Cartão de Crédito</option>
-                              <option value="Cartão de Débito">Cartão de Débito</option>
-                              <option value="Transferência">Transferência</option>
+                              {PAYMENT_METHODS.map((m) => (
+                                <option key={m} value={m}>
+                                  {m}
+                                </option>
+                              ))}
                             </select>
                           </div>
 
@@ -347,7 +345,7 @@ const NewSale = () => {
                                 className="input-field"
                               >
                                 <option value="">Selecione a máquina</option>
-                                {cardMachines.map((machine) => (
+                                {MACHINE_OPTIONS.map((machine) => (
                                   <option key={machine.id} value={machine.name}>
                                     {machine.name}
                                   </option>
@@ -395,7 +393,7 @@ const NewSale = () => {
         )}
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default NewSale
+export default NewSale;

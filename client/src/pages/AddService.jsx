@@ -6,11 +6,8 @@ import Card from "../components/Card";
 import { formatCurrency } from "../utils/format";
 import { createService } from "../services/api";
 
-const cardMachines = [
-  { id: "machine_a", name: "Máquina A" },
-  { id: "machine_b", name: "Máquina B" },
-  { id: "machine_c", name: "Máquina C" },
-];
+// ⬇️ importe os constants (ajuste o caminho se necessário)
+import { MACHINE_OPTIONS, PAYMENT_METHODS } from "../constants/domainsPDV";
 
 export default function AddService() {
   const navigate = useNavigate();
@@ -20,17 +17,30 @@ export default function AddService() {
   const [description, setDescription] = useState("");
   const [employee, setEmployee] = useState("");
 
-  // pagamentos (já aparece direto, como no NewSale)
+  // pagamentos (já aparece direto)
   const [paymentMethods, setPaymentMethods] = useState([
-    { id: Date.now(), method: "Dinheiro", amount: 0, machine: "" },
+    {
+      id: Date.now(),
+      method: PAYMENT_METHODS?.[0] ?? "Dinheiro",
+      amount: 0,
+      machine: "",
+    },
   ]);
 
-  const totalPayments = paymentMethods.reduce((s, pm) => s + (Number(pm.amount) || 0), 0);
+  const totalPayments = paymentMethods.reduce(
+    (s, pm) => s + (Number(pm.amount) || 0),
+    0
+  );
 
   const addPaymentMethod = () => {
     setPaymentMethods((arr) => [
       ...arr,
-      { id: Date.now(), method: "Dinheiro", amount: 0, machine: "" },
+      {
+        id: Date.now(),
+        method: PAYMENT_METHODS?.[0] ?? "Dinheiro",
+        amount: 0,
+        machine: "",
+      },
     ]);
   };
 
@@ -63,14 +73,18 @@ export default function AddService() {
     if (!description.trim()) return toast.error("Informe a descrição");
     if (!employee.trim()) return toast.error("Informe o funcionário");
 
-    if (totalPayments <= 0) return toast.error("Informe pelo menos um pagamento com valor > 0");
+    if (totalPayments <= 0)
+      return toast.error("Informe pelo menos um pagamento com valor > 0");
 
     // cartões exigem máquina
     const cardPays = paymentMethods.filter(
-      (pm) => pm.method === "Cartão de Crédito" || pm.method === "Cartão de Débito"
+      (pm) =>
+        pm.method === "Cartão de Crédito" || pm.method === "Cartão de Débito"
     );
     if (cardPays.some((pm) => !pm.machine)) {
-      return toast.error("Selecione a máquina para todos os pagamentos com cartão");
+      return toast.error(
+        "Selecione a máquina para todos os pagamentos com cartão"
+      );
     }
 
     try {
@@ -78,7 +92,7 @@ export default function AddService() {
         date,
         description: description.trim(),
         employee: employee.trim(),
-        value: Number(totalPayments.toFixed(2)),   // total = soma dos pagamentos
+        value: Number(totalPayments.toFixed(2)), // total = soma dos pagamentos
         paymentMethods: paymentMethods.map((pm) => ({
           method: pm.method,
           amount: Number((+pm.amount).toFixed(2)),
@@ -95,15 +109,24 @@ export default function AddService() {
   };
 
   return (
-    <div>
-      <PageHeader title="Registrar Novo Serviço" />
+   <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-gray-900">
+          Registrar Novo Serviço
+        </h1>
+        <p className="text-sm text-gray-500">
+          Cadastre um novo serviço no sistema
+        </p>
+      </div>
 
       <Card>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* dados principais */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Data *
+              </label>
               <input
                 type="date"
                 value={date}
@@ -114,7 +137,9 @@ export default function AddService() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Funcionário *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Funcionário *
+              </label>
               <input
                 type="text"
                 value={employee}
@@ -126,7 +151,9 @@ export default function AddService() {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Descrição *
+              </label>
               <input
                 type="text"
                 value={description}
@@ -138,9 +165,11 @@ export default function AddService() {
             </div>
           </div>
 
-          {/* detalhes + pagamentos (direto, sem modal e sem campo de valor) */}
+          {/* detalhes + pagamentos */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-medium text-gray-700 mb-2">Detalhes do Serviço</h3>
+            <h3 className="font-medium text-gray-700 mb-2">
+              Detalhes do Serviço
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <p className="text-sm text-gray-500">Serviço</p>
@@ -157,17 +186,21 @@ export default function AddService() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Total (soma dos pagamentos)</p>
+                <p className="text-sm text-gray-500">
+                  Total (soma dos pagamentos)
+                </p>
                 <p className="font-medium text-lg text-blue-600">
                   {formatCurrency(totalPayments)}
                 </p>
               </div>
             </div>
 
-            {/* Métodos de Pagamento — igual ao de vendas */}
+            {/* Métodos de Pagamento */}
             <div className="border-t pt-4">
               <div className="flex justify-between items-center mb-4">
-                <h4 className="font-medium text-gray-700">Métodos de Pagamento</h4>
+                <h4 className="font-medium text-gray-700">
+                  Métodos de Pagamento
+                </h4>
                 <button
                   type="button"
                   onClick={addPaymentMethod}
@@ -187,14 +220,16 @@ export default function AddService() {
                         </label>
                         <select
                           value={pm.method}
-                          onChange={(e) => updatePaymentMethod(pm.id, "method", e.target.value)}
+                          onChange={(e) =>
+                            updatePaymentMethod(pm.id, "method", e.target.value)
+                          }
                           className="input-field"
                         >
-                          <option value="Dinheiro">Dinheiro</option>
-                          <option value="PIX">PIX</option>
-                          <option value="Cartão de Crédito">Cartão de Crédito</option>
-                          <option value="Cartão de Débito">Cartão de Débito</option>
-                          <option value="Transferência">Transferência</option>
+                          {PAYMENT_METHODS.map((m) => (
+                            <option key={m} value={m}>
+                              {m}
+                            </option>
+                          ))}
                         </select>
                       </div>
 
@@ -203,7 +238,9 @@ export default function AddService() {
                           Valor
                         </label>
                         <input
-                          
+                          type="number"
+                          step="0.01"
+                          min="0"
                           value={pm.amount}
                           onChange={(e) =>
                             updatePaymentMethod(pm.id, "amount", e.target.value)
@@ -221,12 +258,16 @@ export default function AddService() {
                           <select
                             value={pm.machine}
                             onChange={(e) =>
-                              updatePaymentMethod(pm.id, "machine", e.target.value)
+                              updatePaymentMethod(
+                                pm.id,
+                                "machine",
+                                e.target.value
+                              )
                             }
                             className="input-field"
                           >
                             <option value="">Selecione a máquina</option>
-                            {cardMachines.map((m) => (
+                            {MACHINE_OPTIONS.map((m) => (
                               <option key={m.id} value={m.name}>
                                 {m.name}
                               </option>
@@ -253,7 +294,11 @@ export default function AddService() {
 
               <div className="mt-4 flex justify-between items-center text-sm">
                 <span>Total do Serviço:</span>
-                <span className={totalPayments > 0 ? "text-green-600" : "text-red-600"}>
+                <span
+                  className={
+                    totalPayments > 0 ? "text-green-600" : "text-red-600"
+                  }
+                >
                   {formatCurrency(totalPayments)}
                 </span>
               </div>

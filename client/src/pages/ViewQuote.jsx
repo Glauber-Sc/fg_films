@@ -193,7 +193,7 @@ const ViewQuote = () => {
               Cliente
             </p>
             <p className="text-sm font-medium text-gray-900">
-              {quote.customerName || "Cliente não informado"}
+              {quote.customer_name || "Cliente não informado"}
             </p>
           </div>
           <div className="sm:text-right">
@@ -302,7 +302,7 @@ const ViewQuote = () => {
             <div className="dln">
               <div className="field">
                 <label>Nome</label>
-                <div className="line">{quote.customerName || ""}</div>
+                <div className="line">{quote.customer_name || ""}</div>
               </div>
               <div className="field">
                 <label>Tel.</label>
@@ -432,7 +432,7 @@ const ViewQuote = () => {
                 Data: {new Date(quote.date).toLocaleDateString("pt-BR")}
               </div>
               <div className="xsmall">
-                Cliente: {quote.customerName || "Não informado"}
+                Cliente: {quote.customer_name || "Não informado"}
               </div>
             </div>
             <div className="total">
