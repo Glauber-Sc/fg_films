@@ -17,7 +17,7 @@ import real from "../../../assets/img/real.png";
 
 async function downloadCarnet() {
   try {
-    const response = await fetch("http://localhost:3000/gerar-carne", { method: "GET" });
+    const response = await fetch("http://localhost:8080/gerar-carne", { method: "GET" });
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");

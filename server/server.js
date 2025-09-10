@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import path from "path";
+import { spawn } from "child_process";
 
 import productsRoutes from "./routes/products.js";
 import salesRoutes from "./routes/sales.js";
@@ -16,20 +16,26 @@ import servicesRoutes from "./routes/services.js";
 
 import { initDb } from "./db/index.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const isPkg = !!process.pkg;
 
-initDb(); // <-- garante tabelas criadas
+if (isPkg) {
+  try {
+    process.chdir(path.dirname(process.execPath));
+  } catch {}
+}
+
+const baseDir = isPkg ? path.dirname(process.execPath) : process.cwd();
+const webDir = path.join(baseDir, "web");
+
+initDb();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
-// Middlewares
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
 app.use(morgan("dev"));
 
-// API Routes
 app.use("/api/products", productsRoutes);
 app.use("/api/sales", salesRoutes);
 app.use("/api/dashboard", dashboardRoutes);
@@ -40,15 +46,21 @@ app.use("/api/quotes", quotesRoutes);
 app.use("/api/expenses", expensesRoutes);
 app.use("/api/services", servicesRoutes);
 
-// Static (produção)
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(join(__dirname, "../client/dist")));
-  app.get("*", (req, res) => {
-    res.sendFile(join(__dirname, "../client/dist/index.html"));
-  });
-}
+app.get("/health", (req, res) => {
+  res.json({ ok: true, baseDir, webDir });
+});
 
-// Start
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.use(express.static(webDir));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(webDir, "index.html"));
+});
+
+app.listen(PORT, "127.0.0.1", () => {
+  console.log(`Server rodando em http://127.0.0.1:${PORT}`);
+  try {
+    spawn("cmd", ["/c", "start", `http://127.0.0.1:${PORT}`], {
+      detached: true,
+      stdio: "ignore",
+    }).unref();
+  } catch {}
 });

@@ -1,0 +1,20 @@
+{
+  "name": "fg_films",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "install:server": "if exist server\\package-lock.json (npm --prefix server ci) else (npm --prefix server install)",
+    "build:client": "npm --prefix client ci || npm --prefix client install && (if exist client\\dist (echo ok) else (npm run build --prefix client))",
+    "prep:dist": "rimraf dist && mkdir dist && (if exist client\\dist (xcopy /E /I /Y client\\dist dist\\web >NUL) else (xcopy /E /I /Y client\\build dist\\web >NUL)) && if not exist dist\\data mkdir dist\\data && (if exist server\\db\\app.db copy /Y server\\db\\app.db dist\\data\\app.db >NUL) && if not exist dist\\node_modules mkdir dist\\node_modules && xcopy /E /I /Y server\\node_modules\\better-sqlite3 dist\\node_modules\\better-sqlite3 >NUL && xcopy /E /I /Y server\\node_modules\\bindings dist\\node_modules\\bindings >NUL && (if exist server\\node_modules\\bindings\\node_modules\\file-uri-to-path (xcopy /E /I /Y server\\node_modules\\bindings\\node_modules\\file-uri-to-path dist\\node_modules\\file-uri-to-path >NUL) else (xcopy /E /I /Y server\\node_modules\\file-uri-to-path dist\\node_modules\\file-uri-to-path >NUL))",
+    "build:server": "esbuild server/server.js --bundle --platform=node --format=cjs --target=node20 --outfile=dist/server.bundle.cjs --external:better-sqlite3",
+    "build:exe": "pkg dist/server.bundle.cjs --targets node20-win-x64 --output dist/app.exe",
+    "make": "npm run install:server && npm run build:client && npm run prep:dist && npm run build:server && npm run build:exe",
+    "dev:server": "node server/server.js"
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.6.0",
+    "@yao-pkg/pkg-fetch": "^3.5.24",
+    "esbuild": "^0.23.0",
+    "rimraf": "^5.0.10"
+  }
+}
